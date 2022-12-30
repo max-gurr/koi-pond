@@ -17,7 +17,7 @@ function init() {
 	canvas.height = height;
 
 	// Make fish
-	f = new Fish(ctx, width/2, height/2);
+	f = new Fish(ctx, x=width/2, y=height/2, numSegs=3);
 }
 
 function animate() {
@@ -44,7 +44,7 @@ class Fish {
 	maxVel;
 	maxForce;
 
-	constructor(c, x, y) {
+	constructor(c, x, y, numSegs) {
 		this.ctx = c
 		this.maxVel = 1;
 		this.maxForce = 0.1;
@@ -58,11 +58,20 @@ class Fish {
 
 		// Calc angle of randomised vel
 		let angle = Math.atan2(this.velY, this.velX) - Math.PI;
-		// Make seg using angle
-		let seg1 = new Segment(c, x, y, 10, angle);
 
-		this.segs = [];
-		this.segs.push(seg1);
+		// Make segs using angle
+		let segs = [];
+		let head = new Segment(c, x, y, 10, angle);
+		segs.push(head);
+
+		for (let i = 0; i < numSegs-1; i++) {
+			let tail = new Segment(c, head.bx, head.by, 10, angle);	
+			segs.push(tail);
+
+			head = tail;
+		}
+		
+		this.segs = segs;
 
 		this.accX = 0;
 		this.accY = 0;
@@ -94,16 +103,28 @@ class Fish {
 		// Constrain vel magnitude
 		this.constrainVel();
 
-		this.segs[0].update(this.velX, this.velY);
+		// Update head with fish vel
+		let head = this.segs[0];
+		head.update(this.velX, this.velY);
+
+		// Update other segs
+		for (let i = 1; i < this.segs.length; i++) {
+			let tail = this.segs[i];
+			tail.follow(head.bx, head.by);
+
+			head = tail;
+		}
 		
 		this.accX = 0;
 		this.accY = 0;
 	}
 
 	draw() {
-		this.segs.forEach(p => {
-			p.draw();
-		});
+		for (let i = 0; i < this.segs.length; i++) {
+			// Use position from tail to adjust size
+			// +1 is necessary because each seg is 2 points
+			this.segs[i].draw(this.segs.length - i + 1);
+		}
 	}
 
 	constrainVel() {
@@ -145,14 +166,16 @@ class Segment {
 		this.calcB();
 	}
 
-	draw() {
+	draw(index) {
 		this.ctx.fillStyle = 'white';
 		this.ctx.strokeStyle = 'white';
 
+		let size = 1;
+
 		this.ctx.beginPath(); 
-		this.ctx.arc(this.ax, this.ay, 4, 0, 2 * Math.PI, false);
+		this.ctx.arc(this.ax, this.ay, size*index, 0, 2 * Math.PI, false);
 		this.ctx.fill();
-		this.ctx.arc(this.bx, this.by, 2, 0, 2 * Math.PI, false);
+		this.ctx.arc(this.bx, this.by, size, 0, 2 * Math.PI, false);
 		this.ctx.fill();
 	}
 
@@ -171,6 +194,20 @@ class Segment {
 		this.angle = Math.atan2(dy, dx);
 
 		// Adjust point b based on new angle and desired length
+		this.calcB();
+	}
+
+	follow(x, y) {
+		this.ax = x;
+		this.ay = y;
+
+		// Diff between point a and point b
+		let dx = this.bx - this.ax;
+		let dy = this.by - this.ay;
+
+		// Angle between points
+		this.angle = Math.atan2(dy, dx);
+
 		this.calcB();
 	}
 
