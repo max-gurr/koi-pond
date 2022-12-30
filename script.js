@@ -2,6 +2,7 @@ let canvas;
 let ctx;
 let f;
 let width, height;
+let mouseX, mouseY;
 
 window.addEventListener("resize", function() {init();})
 
@@ -16,8 +17,12 @@ function init() {
 	canvas.width = width;
 	canvas.height = height;
 
+
+	mouseX = width/2;
+	mouseY = height/2;
+
 	// Make fish
-	f = new Fish(ctx, 100, 100);
+	f = new Fish(ctx, 300, 300);
 }
 
 function animate() {
@@ -35,7 +40,7 @@ function animate() {
 class Fish {
 	ctx;
 	
-	points;
+	segs;
 	vx;
 	vy;
 	ax;
@@ -43,9 +48,9 @@ class Fish {
 
 	constructor(c, x, y) {
 		this.ctx = c
-
-		this.points = [];
-		this.points.push(new Point(c, x, y));
+		
+		this.segs = [];
+		this.segs.push(new Segment(c, x, y, 10, 0));
 		
 		this.vx = Math.random();
 		this.vy = Math.random(); 
@@ -54,32 +59,47 @@ class Fish {
 	}
 
 	update() {
+		// Move towards mouse
+		// let dmouseX = mouseX - this.vx;
+		// let dmouseY = mouseY - this.vy;
+
+		// this.ax += dmouseX;
+		// this.ay += dmouseY;
+
 		this.vx += this.ax;
 		this.vy += this.ay;
 
-		this.points[0].update(this.vx, this.vy);
+		this.segs[0].update(this.vx, this.vy);
 		
 		this.ax = 0;
 		this.ay = 0;
 	}
 
 	draw() {
-		this.points.forEach(p => {
+		this.segs.forEach(p => {
 			p.draw();
 		});
 	}
 }
 
 
-class Point {
+class Segment {
 	ctx;
-	x;
-	y;
+	ax;
+	ay;
+	bx;
+	by;
+	len;
+	angle;
 
-	constructor(ctx, x, y) {
+	constructor(ctx, x, y, len, angle) {
 		this.ctx = ctx;
-		this.x = x;
-		this.y = y;
+		this.len = len;
+		this.angle = angle;
+		this.ax = x;
+		this.ay = y;
+
+		this.calcB();
 	}
 
 	draw() {
@@ -87,13 +107,34 @@ class Point {
 		this.ctx.strokeStyle = 'white';
 
 		this.ctx.beginPath(); 
-		this.ctx.arc(this.x, this.y, 2, 0, 2 * Math.PI, false);
-		this.ctx.fill(); 
+		this.ctx.arc(this.ax, this.ay, 4, 0, 2 * Math.PI, false);
+		this.ctx.fill();
+		this.ctx.arc(this.bx, this.by, 2, 0, 2 * Math.PI, false);
+		this.ctx.fill();
 	}
 
 	update(vx, vy) {
-		this.x += vx;
-		this.y += vy;
+		// Move head of segment to new position
+		this.ax += vx;
+		this.ay += vy;
+
+		// Move tail towards head
+
+		// Diff between point a and point b
+		let dx = this.bx - this.ax;
+		let dy = this.by - this.ay;
+
+		// Angle between points
+		this.angle = Math.atan2(dy, dx);
+
+		// Adjust point b based on new angle and desired length
+		this.calcB();
+	}
+
+	calcB() {
+
+		this.bx = this.ax + this.len*Math.cos(this.angle);
+		this.by = this.ay + this.len*Math.sin(this.angle);
 	}
 }
 
