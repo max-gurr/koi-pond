@@ -2,6 +2,7 @@ let canvas;
 let ctx;
 let f;
 let width, height;
+let border = 50;
 
 window.addEventListener("resize", function() {init();})
 
@@ -59,13 +60,19 @@ class Fish {
 		// Calc angle of randomised vel
 		let angle = Math.atan2(this.velY, this.velX) - Math.PI;
 
+
 		// Make segs using angle
+		this.segs = this.constructSegments(angle);
+		let minLen = 5;
+		let lenIncrement = 2;
+
 		let segs = [];
-		let head = new Segment(c, x, y, 10, angle);
+		let head = new Segment(c, x, y, minLen + lenIncrement*numSegs, angle);
 		segs.push(head);
 
 		for (let i = 0; i < numSegs-1; i++) {
-			let tail = new Segment(c, head.bx, head.by, 10, angle);	
+			let len = numSegs - (i+1);
+			let tail = new Segment(c, head.bx, head.by, minLen + lenIncrement*len, angle);	
 			segs.push(tail);
 
 			head = tail;
@@ -73,13 +80,17 @@ class Fish {
 		
 		this.segs = segs;
 
+
 		this.accX = 0;
 		this.accY = 0;
 	}
 
+	constructSegments(angle) {
+
+	}
+
 	update() {
 		// Check position of head
-		let border = 100;
 		let x = this.segs[0].ax;
 		let y = this.segs[0].ay;
 
@@ -122,7 +133,8 @@ class Fish {
 	draw() {
 		for (let i = 0; i < this.segs.length; i++) {
 			// Use position from tail to adjust size
-			// +1 is necessary because each seg is 2 points
+			// +1 is necessary because each seg is 2 points,
+			// so the size of the last dot would be 0
 			this.segs[i].draw(this.segs.length - i + 1);
 		}
 	}
