@@ -36,45 +36,40 @@ class Fish {
 	ctx;
 	
 	segs;
-	vx;
-	vy;
-	ax;
-	ay;
+	velX;
+	velY;
+	accX;
+	accY;
 
 	maxVel;
 	maxForce;
 
 	constructor(c, x, y) {
 		this.ctx = c
-		this.maxVel = 0.5;
+		this.maxVel = 1;
 		this.maxForce = 0.1;
 
 		// Init with random vel
-		this.vx = Math.random()*2-1;
-		this.vy = Math.random()*2-1;
+		this.velX = Math.random()*2-1;
+		this.velY = Math.random()*2-1;
 
 		// Set vel magnitude
 		this.constrainVel();
 
 		// Calc angle of randomised vel
-		let angle = Math.atan2(this.vy, this.vx) - Math.PI;
+		let angle = Math.atan2(this.velY, this.velX) - Math.PI;
 		// Make seg using angle
 		let seg1 = new Segment(c, x, y, 10, angle);
 
 		this.segs = [];
 		this.segs.push(seg1);
 
-		this.ax = 0;
-		this.ay = 0;
+		this.accX = 0;
+		this.accY = 0;
 	}
 
 	update() {
-		// Move towards mouse
-		// let dmouseX = mouseX - this.vx;
-		// let dmouseY = mouseY - this.vy;
-
-		// this.ax += dmouseX;
-		// this.ay += dmouseY;
+		// Check position of head
 		let border = 100;
 		let x = this.segs[0].ax;
 		let y = this.segs[0].ay;
@@ -83,26 +78,26 @@ class Fish {
 		if (x < border || (width - x) < border) {
 			let targetX = width/2;
 			let dx = targetX - x;
-			this.ax += dx - this.vx;
+			this.accX += dx - this.velX;
 		}
 		if (y < border || (height - y) < border) {
 			let targetY = height/2;
 			let dy = targetY - y;
-			this.ay += dy - this.vy;
+			this.accY += dy - this.velY;
 		}
 		// Limit acc force
 		this.constrainAcc();
 
-		this.vx += this.ax;
-		this.vy += this.ay;
+		this.velX += this.accX;
+		this.velY += this.accY;
 
 		// Constrain vel magnitude
 		this.constrainVel();
 
-		this.segs[0].update(this.vx, this.vy);
+		this.segs[0].update(this.velX, this.velY);
 		
-		this.ax = 0;
-		this.ay = 0;
+		this.accX = 0;
+		this.accY = 0;
 	}
 
 	draw() {
@@ -113,19 +108,19 @@ class Fish {
 
 	constrainVel() {
 		let max = this.maxVel;
-		let mag = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+		let mag = Math.sqrt(this.velX * this.velX + this.velY * this.velY);
 		
-		this.vx = max * this.vx / mag
-		this.vy = max * this.vy / mag;
+		this.velX = max * this.velX / mag
+		this.velY = max * this.velY / mag;
 	}
 
 	constrainAcc() {
 		let max = this.maxForce;
-		let mag = Math.sqrt(this.ax * this.ax + this.ay * this.ay);
+		let mag = Math.sqrt(this.accX * this.accX + this.accY * this.accY);
 		
 		if (mag > max) {
-			this.ax = max * this.ax / mag
-			this.ay = max * this.ay / mag;
+			this.accX = max * this.accX / mag
+			this.accY = max * this.accY / mag;
 		}
 	}
 }
@@ -180,7 +175,6 @@ class Segment {
 	}
 
 	calcB() {
-
 		this.bx = this.ax + this.len*Math.cos(this.angle);
 		this.by = this.ay + this.len*Math.sin(this.angle);
 	}
