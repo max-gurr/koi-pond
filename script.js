@@ -42,54 +42,76 @@ class Fish {
 	accX;
 	accY;
 
-	maxVel;
-	maxForce;
+	maxVel = 1;
+	minVel = 1;
+	maxForce = 0.075;
+
+	tick;
 
 	constructor(c, x, y, numSegs) {
 		this.ctx = c
-		this.maxVel = 1;
-		this.maxForce = 0.1;
 
 		// Init with random vel
 		this.velX = Math.random()*2-1;
 		this.velY = Math.random()*2-1;
 
 		// Set vel magnitude
-		this.constrainVel();
+		this._constrainVel();
 
 		// Calc angle of randomised vel
 		let angle = Math.atan2(this.velY, this.velX) - Math.PI;
 
-
 		// Make segs using angle
-		this.segs = this.constructSegments(angle);
+		this.segs = this.constructSegments(this.ctx, angle);
+
+		this.accX = 0;
+		this.accY = 0;
+
+		this.tick = 0;
+	}
+
+	constructSegments(ctx, angle) {
 		let minLen = 5;
 		let lenIncrement = 2;
 
 		let segs = [];
-		let head = new Segment(c, x, y, minLen + lenIncrement*numSegs, angle);
+		let head = new Segment(ctx, x, y, minLen + lenIncrement*numSegs, angle);
 		segs.push(head);
 
 		for (let i = 0; i < numSegs-1; i++) {
 			let len = numSegs - (i+1);
-			let tail = new Segment(c, head.bx, head.by, minLen + lenIncrement*len, angle);	
+			let tail = new Segment(ctx, head.bx, head.by, minLen + lenIncrement*len, angle);	
 			segs.push(tail);
 
 			head = tail;
 		}
-		
-		this.segs = segs;
 
-
-		this.accX = 0;
-		this.accY = 0;
-	}
-
-	constructSegments(angle) {
-
+		return segs;
 	}
 
 	update() {
+		// Move away from edges of screen
+		this._avoidBorder();
+
+		// Limit acc force
+		this._constrainAcc();
+
+		this.velX += this.accX;
+		this.velY += this.accY;
+
+		// Move fish segments
+		this._moveSegments();
+		
+		// Constrain vel magnitude
+		this._constrainVel();
+		
+		this.accX = 0;
+		this.accY = 0;
+
+		this.tick += 0.1;
+	}
+
+	_avoidBorder() {
 		// Check position of head
 		let x = this.segs[0].ax;
 		let y = this.segs[0].ay;
@@ -105,29 +127,36 @@ class Fish {
 			let dy = targetY - y;
 			this.accY += dy - this.velY;
 		}
-		// Limit acc force
-		this.constrainAcc();
+	}
 
-		this.velX += this.accX;
-		this.velY += this.accY;
-
-		// Constrain vel magnitude
-		this.constrainVel();
-
+	_moveSegments() {
 		// Update head with fish vel
 		let head = this.segs[0];
 		head.update(this.velX, this.velY);
 
+		// Wiggle head of fish directly
+		let adjustSize = 0.15 * Math.sin(this.tick + 0.15);
+		let adjustAngle = head.angle - Math.PI/2;
+
+		let xAdjust = adjustSize * Math.cos(adjustAngle);
+		let yAdjust = adjustSize * Math.sin(adjustAngle);
+
+		head.update(xAdjust, yAdjust);
+
+		// Wiggle end of head segment by driving angle
+		head.driveAngle(this.tick, 0);
+
 		// Update other segs
 		for (let i = 1; i < this.segs.length; i++) {
+			// Follow the previous segment
 			let tail = this.segs[i];
 			tail.follow(head.bx, head.by);
 
 			head = tail;
+
+			// Wiggle segment by driving angle
+			head.driveAngle(this.tick, i);
 		}
-		
-		this.accX = 0;
-		this.accY = 0;
 	}
 
 	draw() {
@@ -139,15 +168,15 @@ class Fish {
 		}
 	}
 
-	constrainVel() {
-		let max = this.maxVel;
-		let mag = Math.sqrt(this.velX * this.velX + this.velY * this.velY);
-		
-		this.velX = max * this.velX / mag
-		this.velY = max * this.velY / mag;
+	_constrainVel() {
+		let currentMag = Math.sqrt(this.velX * this.velX + this.velY * this.velY);
+		let desiredMag = Math.max(this.minVel, Math.min(this.maxVel, currentMag));
+
+		this.velX = desiredMag * this.velX / currentMag
+		this.velY = desiredMag * this.velY / currentMag;
 	}
 
-	constrainAcc() {
+	_constrainAcc() {
 		let max = this.maxForce;
 		let mag = Math.sqrt(this.accX * this.accX + this.accY * this.accY);
 		
@@ -206,6 +235,21 @@ class Segment {
 		this.angle = Math.atan2(dy, dx);
 
 		// Adjust point b based on new angle and desired length
+		this.calcB();
+	}
+
+	driveAngle(tick, index) {
+		let angleIncrement = -0.5;
+		let angle = tick + (angleIncrement * index);
+
+		let startSize = 0.025;
+		let sizeIncrement = 0.01;
+		let size = startSize + (index * sizeIncrement);
+
+		let adjust = size * Math.sin(angle);
+		
+		this.angle += adjust;
+		
 		this.calcB();
 	}
 
