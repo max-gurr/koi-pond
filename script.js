@@ -94,10 +94,15 @@ class Fish {
 		segs.push(head);
 
 		for (let i = 0; i < numSegs-1; i++) {
-			let len = numSegs - (i+1);
-			let tail = new Segment(ctx, head.bx, head.by, minLen + lenIncrement*len, angle);	
+			// Adjust size of segment based on position
+			// let lenFactor = numSegs + Math.abs(1 - i);
+			let lenFactor = numSegs - (i+1);
+
+			let tail = new Segment(ctx, head.bx, head.by, minLen + lenIncrement*lenFactor, angle);	
+			
 			segs.push(tail);
 
+			// Use tail of current segment as head of next segment
 			head = tail;
 		}
 
@@ -131,6 +136,7 @@ class Fish {
 		let x = this.segs[0].ax;
 		let y = this.segs[0].ay;
 
+		/*
 		// Check x vs y edges separately to avoid quick turning
 		if (x < border || (width - x) < border) {
 			let targetX = width/2;
@@ -142,6 +148,24 @@ class Fish {
 			let dy = targetY - y;
 			this.accY += dy - this.velY;
 		}
+		*/
+
+		// Push towards centre if at border
+		if (x < border || (width - x) < border || 
+			y < border || (height - y) < border) {
+			let targetX = width/2;
+			let targetY = height/2;
+
+			// Vector from current position to desired position
+			// i.e. desired velocity
+			let dx = targetX - x;
+			let dy = targetY - y;
+
+			// Vector from current velocity to desired velocity
+			// i.e. acceleration force towards the desired velocity
+			this.accX += dx - this.velX;
+			this.accY += dy - this.velY;
+		}
 	}
 
 	_moveSegments() {
@@ -150,7 +174,7 @@ class Fish {
 		head.update(this.velX, this.velY);
 
 		// Wiggle head of fish directly
-		let adjustSize = 0.1 * Math.sin(this.tick);
+		let adjustSize = 0.1 * Math.sin(this.tick + 0.25);
 		let adjustAngle = head.angle - Math.PI/2;
 
 		let xAdjust = adjustSize * Math.cos(adjustAngle);
@@ -177,9 +201,11 @@ class Fish {
 	draw() {
 		for (let i = 0; i < this.segs.length; i++) {
 			// Use position from tail to adjust size
-			// +1 is necessary because each seg is 2 points,
-			// so the size of the last dot would be 0
-			this.segs[i].draw(this.segs.length - i + 1);
+			
+			// let sizeFactor = this.segs.length - Math.abs(1 - i);
+			let sizeFactor = this.segs.length - i;
+
+			this.segs[i].draw(sizeFactor);
 		}
 	}
 
@@ -222,16 +248,18 @@ class Segment {
 		this.calcB();
 	}
 
-	draw(index) {
+	draw(sizeFactor) {
 		this.ctx.fillStyle = 'white';
 		this.ctx.strokeStyle = 'white';
 
-		let size = 1;
+		// SizeFactor is the position of segment from the tail
+		let sizeIncrement = 1.5;
+		let minSize = 1;
 
 		this.ctx.beginPath(); 
-		this.ctx.arc(this.ax, this.ay, size*index, 0, 2 * Math.PI, false);
+		this.ctx.arc(this.ax, this.ay, minSize + sizeIncrement*sizeFactor, 0, 2 * Math.PI, false);
 		this.ctx.fill();
-		this.ctx.arc(this.bx, this.by, size, 0, 2 * Math.PI, false);
+		this.ctx.arc(this.bx, this.by, minSize + sizeIncrement*(sizeFactor-1), 0, 2 * Math.PI, false);
 		this.ctx.fill();
 	}
 
