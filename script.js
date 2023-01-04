@@ -4,6 +4,8 @@ let f;
 let width, height;
 let border = 50;
 
+let school = [];
+
 window.addEventListener("resize", function() {init();})
 
 function init() {
@@ -18,15 +20,25 @@ function init() {
 	canvas.height = height;
 
 	// Make fish
-	f = new Fish(ctx, x=width/2, y=height/2, numSegs=3);
+	for (let i = 0; i < 5; i++) {
+		let xPos = width/2 + (Math.random() * 2 - 1) * (width/2 - border);
+		let yPos = height/2 + (Math.random() *2 - 1) * (height/2 - border);
+
+		f = new Fish(ctx, xPos, yPos, numSegs=3);
+		
+		school.push(f);	
+	}
+	
 }
 
 function animate() {
 	ctx.fillStyle = "rgba(50, 50, 50, 1)";
 	ctx.fillRect(0, 0, width, height);
 
-	f.update();
-	f.draw();
+	school.forEach((fish) => {
+		fish.update();
+		fish.draw();
+	});
 
 	// Cue next animation frame
 	requestAnimationFrame(this.animate.bind(this));
@@ -52,17 +64,20 @@ class Fish {
 		this.ctx = c
 
 		// Init with random vel
-		this.velX = Math.random()*2-1;
-		this.velY = Math.random()*2-1;
+		// Random heading
+		let angle = Math.random() * Math.PI * 2;
+		// Random velocity within desired range
+		let vel = Math.random() * (this.maxVel - this.minVel) + this.minVel;
+		
+		this.velX = this.maxVel * Math.cos(angle);
+		this.velY = this.maxVel * Math.sin(angle);
 
-		// Set vel magnitude
+		// Constrain vel magnitude
 		this._constrainVel();
 
-		// Calc angle of randomised vel
-		let angle = Math.atan2(this.velY, this.velX) - Math.PI;
-
-		// Make segs using angle
-		this.segs = this.constructSegments(this.ctx, angle);
+		// Make segs facing opposite to direction of velocity
+		let segmentAngle = angle - Math.PI;
+		this.segs = this.constructSegments(this.ctx, x, y, segmentAngle);
 
 		this.accX = 0;
 		this.accY = 0;
@@ -70,7 +85,7 @@ class Fish {
 		this.tick = 0;
 	}
 
-	constructSegments(ctx, angle) {
+	constructSegments(ctx, x, y, angle) {
 		let minLen = 5;
 		let lenIncrement = 2;
 
@@ -135,7 +150,7 @@ class Fish {
 		head.update(this.velX, this.velY);
 
 		// Wiggle head of fish directly
-		let adjustSize = 0.15 * Math.sin(this.tick + 0.15);
+		let adjustSize = 0.1 * Math.sin(this.tick);
 		let adjustAngle = head.angle - Math.PI/2;
 
 		let xAdjust = adjustSize * Math.cos(adjustAngle);
@@ -239,7 +254,7 @@ class Segment {
 	}
 
 	driveAngle(tick, index) {
-		let angleIncrement = -0.5;
+		let angleIncrement = -0.4;
 		let angle = tick + (angleIncrement * index);
 
 		let startSize = 0.025;
