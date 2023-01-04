@@ -82,7 +82,9 @@ class Fish {
 		this.accX = 0;
 		this.accY = 0;
 
-		this.tick = 0;
+		// Individual ticker used for wiggle movement
+		// Randomise start values so wiggles aren't synchronised
+		this.tick = Math.random() * Math.PI * 2;
 	}
 
 	constructSegments(ctx, x, y, angle) {
@@ -94,11 +96,17 @@ class Fish {
 		segs.push(head);
 
 		for (let i = 0; i < numSegs-1; i++) {
-			// Adjust size of segment based on position
+			// Adjust length of segment based on position
+
+			// Longest at second nodule
 			// let lenFactor = numSegs + Math.abs(1 - i);
+			
+			// Longest at head
 			let lenFactor = numSegs - (i+1);
 
-			let tail = new Segment(ctx, head.bx, head.by, minLen + lenIncrement*lenFactor, angle);	
+
+			let segLen = minLen + lenIncrement * lenFactor;
+			let tail = new Segment(ctx, head.bx, head.by, segLen, angle);	
 			
 			segs.push(tail);
 
@@ -132,7 +140,7 @@ class Fish {
 	}
 
 	_avoidBorder() {
-		// Check position of head
+		// Use position of head of first segment
 		let x = this.segs[0].ax;
 		let y = this.segs[0].ay;
 
@@ -173,16 +181,20 @@ class Fish {
 		let head = this.segs[0];
 		head.update(this.velX, this.velY);
 
-		// Wiggle head of fish directly
+		// Wiggle head of fish directly, 
+		// perpendicular to direction of velocity
+
+		// Size of wiggle movement
 		let adjustSize = 0.1 * Math.sin(this.tick + 0.25);
 		let adjustAngle = head.angle - Math.PI/2;
 
+		// Vector of wiggle movement
 		let xAdjust = adjustSize * Math.cos(adjustAngle);
 		let yAdjust = adjustSize * Math.sin(adjustAngle);
 
 		head.update(xAdjust, yAdjust);
 
-		// Wiggle end of head segment by driving angle
+		// Wiggle next nodule by driving angle
 		head.driveAngle(this.tick, 0);
 
 		// Update other segs
@@ -193,7 +205,7 @@ class Fish {
 
 			head = tail;
 
-			// Wiggle segment by driving angle
+			// Wiggle by driving angle
 			head.driveAngle(this.tick, i);
 		}
 	}
@@ -202,7 +214,10 @@ class Fish {
 		for (let i = 0; i < this.segs.length; i++) {
 			// Use position from tail to adjust size
 			
+			// Largest at second nodule
 			// let sizeFactor = this.segs.length - Math.abs(1 - i);
+			
+			// Largest at head
 			let sizeFactor = this.segs.length - i;
 
 			this.segs[i].draw(sizeFactor);
@@ -210,6 +225,7 @@ class Fish {
 	}
 
 	_constrainVel() {
+		// Adjust velocity vector to within desired magnitude
 		let currentMag = Math.sqrt(this.velX * this.velX + this.velY * this.velY);
 		let desiredMag = Math.max(this.minVel, Math.min(this.maxVel, currentMag));
 
@@ -218,6 +234,7 @@ class Fish {
 	}
 
 	_constrainAcc() {
+		// Adjust acceleration vector to within desired magnitude
 		let max = this.maxForce;
 		let mag = Math.sqrt(this.accX * this.accX + this.accY * this.accY);
 		
@@ -245,6 +262,7 @@ class Segment {
 		this.ax = x;
 		this.ay = y;
 
+		// Initialise location of segment tail
 		this.calcB();
 	}
 
@@ -256,20 +274,22 @@ class Segment {
 		let sizeIncrement = 1.5;
 		let minSize = 1;
 
+		// Draw arc at head of segment
 		this.ctx.beginPath(); 
 		this.ctx.arc(this.ax, this.ay, minSize + sizeIncrement*sizeFactor, 0, 2 * Math.PI, false);
 		this.ctx.fill();
+
+		// Draw arc at tail of segment
 		this.ctx.arc(this.bx, this.by, minSize + sizeIncrement*(sizeFactor-1), 0, 2 * Math.PI, false);
 		this.ctx.fill();
 	}
 
 	update(vx, vy) {
-		// Move head of segment to new position
+		// Move head of segment
 		this.ax += vx;
 		this.ay += vy;
 
 		// Move tail towards head
-
 		// Diff between point a and point b
 		let dx = this.bx - this.ax;
 		let dy = this.by - this.ay;
@@ -282,31 +302,36 @@ class Segment {
 	}
 
 	driveAngle(tick, index) {
+		// Angle of wiggle on sine curve
 		let angleIncrement = -0.4;
-		let angle = tick + (angleIncrement * index);
+		let wiggleAngle = tick + (angleIncrement * index);
 
+		// Size coefficient for wiggle
 		let startSize = 0.025;
 		let sizeIncrement = 0.01;
-		let size = startSize + (index * sizeIncrement);
+		let wiggleSize = startSize + (index * sizeIncrement);
 
-		let adjust = size * Math.sin(angle);
+		let adjust = wiggleSize * Math.sin(wiggleAngle);
 		
+		// Use wiggle to adjust segment angle
 		this.angle += adjust;
-		
+		// Recalculate tail position with new angle
 		this.calcB();
 	}
 
 	follow(x, y) {
+		// Set location of segment head
 		this.ax = x;
 		this.ay = y;
 
-		// Diff between point a and point b
+		// Distance between new head and old tail
 		let dx = this.bx - this.ax;
 		let dy = this.by - this.ay;
 
-		// Angle between points
+		// New angle between current head and old tail
 		this.angle = Math.atan2(dy, dx);
 
+		// Reposition tail with updated angle
 		this.calcB();
 	}
 
