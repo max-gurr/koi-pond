@@ -58,6 +58,7 @@ class Segment {
 		
 		// Use wiggle to adjust segment angle
 		this.angle += adjust;
+		
 		// Recalculate tail position with new angle
 		this.calcB();
 	}

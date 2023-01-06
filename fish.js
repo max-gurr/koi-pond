@@ -19,14 +19,14 @@ class Fish {
 		// Init with random vel
 		// Random heading
 		let angle = Math.random() * Math.PI * 2;
-		// Random velocity within desired range
-		let vel = Math.random() * (this.maxVel - this.minVel) + this.minVel;
 		
 		this.velX = this.maxVel * Math.cos(angle);
 		this.velY = this.maxVel * Math.sin(angle);
 
 		// Constrain vel magnitude
-		this._constrainVel();
+		let vel = this._constrainVector(this.velX, this.velY, this.minVel, this.maxVel);
+		this.velX = vel[0];
+		this.velY = vel[1];
 
 		// Make segs facing opposite to direction of velocity
 		let segmentAngle = angle - Math.PI;
@@ -37,7 +37,7 @@ class Fish {
 
 		// Individual ticker used for wiggle movement
 		// Randomise start values so wiggles aren't synchronised
-		this.tick = Math.random() * Math.PI * 2;
+		this.tick = Math.random() * Math.PI
 	}
 
 	constructSegments(ctx, x, y, angle) {
@@ -75,21 +75,27 @@ class Fish {
 		this._avoidBorder();
 
 		// Limit acc force
-		this._constrainAcc();
+		let acc = this._constrainVector(this.accX, this.accY, 0, this.maxForce);
+		this.accX = acc[0];
+		this.accY = acc[1];
 
 		this.velX += this.accX;
 		this.velY += this.accY;
 
+		// Constrain vel magnitude
+		let vel = this._constrainVector(this.velX, this.velY, this.minVel, this.maxVel);
+		this.velX = vel[0];
+		this.velY = vel[1];
+		
 		// Move fish segments
 		this._moveSegments();
-		
-		// Constrain vel magnitude
-		this._constrainVel();
 		
 		this.accX = this.accX/2;
 		this.accY = this.accY/2;
 
 		this.tick += 0.1;
+		// Limit value so it doesn't increase to infinity
+		this.tick = this.tick % (Math.PI * 2);
 	}
 
 	_avoidBorder() {
@@ -136,11 +142,11 @@ class Fish {
 		let head = this.segs[0];
 		head.update(this.velX, this.velY);
 
-		// Wiggle head of fish directly, 
-		// perpendicular to direction of velocity
+		// Wiggle head point of fish directly, 
+		// 		perpendicular to direction of velocity
 
 		// Size of wiggle movement
-		let adjustSize = 0.1 * Math.sin(this.tick + 0.25);
+		let adjustSize = 0.1 * Math.sin(this.tick);
 		let adjustAngle = head.angle - Math.PI/2;
 
 		// Vector of wiggle movement
@@ -149,8 +155,8 @@ class Fish {
 
 		head.update(xAdjust, yAdjust);
 
-		// Wiggle next nodule by driving angle
-		this._driveSegment(head, 0);
+		// Wiggle other points by driving angle
+		this._driveSegment(0);
 
 		// Update other segs
 		for (let i = 1; i < this.segs.length; i++) {
@@ -159,25 +165,28 @@ class Fish {
 			tail.follow(head.bx, head.by);
 
 			// Wiggle by driving angle
-			this._driveSegment(tail, i);
+			this._driveSegment(i);
 
 			head = tail;
 		}
 	}
 
-	_driveSegment(segment, index) {		
+	_driveSegment(index) {
 		// Angle of wiggle on sine curve
-		// Head and tail of fish should have same wiggle - so adjust increment by num of segs
-		// Each segment has 2 points, so number of points to wiggle is num of segs +1
-		let angleIncrement = -1 * Math.PI/(this.segs.length+1);
-		let wiggleAngle = this.tick + (angleIncrement * index);
+		// Head and tail of fish should have same wiggle 
+		// So adjust increment by num of points being driven
+		let angleIncrement = -1 * Math.PI/(this.segs.length);
+		// Point being driven is tail of current segment
+		// So point number is 1 + segment number
+		let wiggleAngle = this.tick + (angleIncrement * (index+1));
 
 		// Size coefficient for wiggle
-		let startSize = 0.025;
+		// Index is an arbitrary multiplier, doesn't need to specifically reference seg/point
+		let startSize = 0.02;
 		let sizeIncrement = 0.01;
-		let wiggleSize = startSize + (index * sizeIncrement);
+		let wiggleSize = startSize + (sizeIncrement * index);
 
-		segment.driveAngle(wiggleSize, wiggleAngle);
+		this.segs[index].driveAngle(wiggleSize, wiggleAngle);
 	}
 
 	_constrainVector(x, y, min, max) {
@@ -185,10 +194,13 @@ class Fish {
 		let currentMag = Math.sqrt(x * x + y * y);
 		let desiredMag = Math.max(min, Math.min(max, currentMag));
 
-		let newX = desiredMag * x / currentMag
+		let newX = desiredMag * x / currentMag;
 		let newY = desiredMag * y / currentMag;
 
-		return [newX, newY];
+		return [
+			newX || 0, 
+			newY || 0
+		];
 	}
 
 	draw() {
