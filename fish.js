@@ -52,7 +52,6 @@ class Fish {
 			// Longest at head
 			let lenFactor = numSegs - (i+1);
 
-
 			let segLen = minLen + lenIncrement * lenFactor;
 			let tail = new Segment(ctx, head.bx, head.by, segLen, angle);	
 			
@@ -179,7 +178,7 @@ class Fish {
 		// Angle of wiggle on sine curve
 		// Head and tail of fish should have same wiggle 
 		// So adjust increment by num of points being driven
-		let angleIncrement = -1 * Math.PI/(this.segs.length);
+		let angleIncrement = -Math.PI/(this.segs.length);
 		// Point being driven is tail of current segment
 		// So point number is 1 + segment number
 		let wiggleAngle = this.tick + (angleIncrement * (index+1));
@@ -217,8 +216,11 @@ class Fish {
 			
 			// Largest at head
 			let sizeFactor = this.segs.length - i;
-
-			this.segs[i].draw(sizeFactor, i == 0, i == this.segs.length - 1, i == 0);
+			
+			let drawHead = i==0;
+			let drawFins = i==0;
+			let drawTail = i==this.segs.length-1;
+			this.segs[i].draw(sizeFactor, drawHead, drawTail, drawFins);
 			this.ctx.restore();
 		}
 	}

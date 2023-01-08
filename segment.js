@@ -95,16 +95,19 @@ class Segment {
 			// this.ctx.stroke();
 		}
 
+		// Draw fish fins
 		if (drawFins) {
 			let finSize = 4;
 			let finX = bWidth*1.3;
 			let finY = this.len/2.5;
 			let finStretch = 1.25;
 
+			// Left fin
 			this.ctx.moveTo(-finX, -finY);
 			this.ctx.quadraticCurveTo(-(finX + finSize), -finY, -(finX+finSize), -(finY+finSize*finStretch));
 			this.ctx.quadraticCurveTo(-finX, -(finY+finSize), -finX, -finY);
 			
+			// Right fin
 			this.ctx.moveTo(finX, -finY);
 			this.ctx.quadraticCurveTo((finX + finSize), -finY, (finX+finSize), -(finY+finSize*finStretch));
 			this.ctx.quadraticCurveTo(finX, -(finY+finSize), finX, -finY);
@@ -114,7 +117,7 @@ class Segment {
 		}
 
 		// Head of segment
-		this.ctx.moveTo(-1 * aWidth, 0);
+		this.ctx.moveTo(-aWidth, 0);
 		this.ctx.lineTo(aWidth, 0);
 
 		// Adjust canvas to point b
@@ -122,7 +125,7 @@ class Segment {
 
 		// Tail of segment
 		this.ctx.lineTo(bWidth, 0);
-		this.ctx.lineTo(-1*bWidth, 0);
+		this.ctx.lineTo(-bWidth, 0);
 		
 		// Draw segment
 		this.ctx.fill();
@@ -133,10 +136,12 @@ class Segment {
 			let tailSize = 4;
 			let tailStretch = 1.5;
 
+			// Left fin
 			this.ctx.moveTo(0, 0);
 			this.ctx.quadraticCurveTo(-tailSize, 0, -tailSize, -tailSize*tailStretch);
 			this.ctx.quadraticCurveTo(0, -tailSize, 0, 0);
 			
+			// Right fin
 			this.ctx.moveTo(0, 0);
 			this.ctx.quadraticCurveTo(tailSize, 0, tailSize, -tailSize*tailStretch);
 			this.ctx.quadraticCurveTo(0, -tailSize, 0, 0);

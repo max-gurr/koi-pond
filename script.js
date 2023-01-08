@@ -23,8 +23,8 @@ function init() {
 	// Make fish
 	school = [];
 	for (let i = 0; i < numFish; i++) {
-		let xPos = width/2 + (Math.random() * 2 - 1) * (width/2 - border);
-		let yPos = height/2 + (Math.random() *2 - 1) * (height/2 - border);
+		let xPos = width/2 + (Math.random()*2-1) * (width/2 - border);
+		let yPos = height/2 + (Math.random()*2-1) * (height/2 - border);
 
 		f = new Fish(ctx, xPos, yPos, numSegs=3);
 		
