@@ -97,8 +97,8 @@ class Segment {
 
 		if (drawFins) {
 			let finSize = 4;
-			let finX = bWidth*1.4;
-			let finY = this.len/3;
+			let finX = bWidth*1.3;
+			let finY = this.len/2.5;
 			let finStretch = 1.25;
 
 			this.ctx.moveTo(-finX, -finY);

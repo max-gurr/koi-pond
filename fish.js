@@ -146,18 +146,18 @@ class Fish {
 		let head = this.segs[0];
 		head.update(this.velX, this.velY);
 
-		// Wiggle head point of fish directly, 
-		// 		perpendicular to direction of velocity
+		// // Wiggle head point of fish directly, 
+		// // 		perpendicular to direction of velocity
 
-		// Size of wiggle movement
-		let adjustSize = 0.1 * Math.sin(this.tick);
-		let adjustAngle = head.angle - Math.PI/2;
+		// // Size of wiggle movement
+		// let adjustSize = 0.1 * Math.sin(this.tick);
+		// let adjustAngle = head.angle - Math.PI/2;
 
-		// Vector of wiggle movement
-		let xAdjust = adjustSize * Math.cos(adjustAngle);
-		let yAdjust = adjustSize * Math.sin(adjustAngle);
+		// // Vector of wiggle movement
+		// let xAdjust = adjustSize * Math.cos(adjustAngle);
+		// let yAdjust = adjustSize * Math.sin(adjustAngle);
 
-		head.update(xAdjust, yAdjust);
+		// head.update(xAdjust, yAdjust);
 
 		// Wiggle other points by driving angle
 		this._driveSegment(0);
@@ -186,7 +186,7 @@ class Fish {
 
 		// Size coefficient for wiggle
 		// Index is an arbitrary multiplier, doesn't need to specifically reference seg/point
-		let startSize = 0.02;
+		let startSize = 0.01;
 		let sizeIncrement = 0.01;
 		let wiggleSize = startSize + (sizeIncrement * index);
 

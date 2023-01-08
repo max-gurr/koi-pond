@@ -34,7 +34,7 @@ function init() {
 }
 
 function animate() {
-	ctx.fillStyle = "rgba(50, 50, 50, 1)";
+	ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
 	ctx.fillRect(0, 0, width, height);
 
 	school.forEach((fish) => {
