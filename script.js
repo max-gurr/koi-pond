@@ -4,7 +4,8 @@ let f;
 let width, height;
 let border = 50;
 
-let school = [];
+let numFish = 5;
+let school;
 
 window.addEventListener("resize", function() {init();})
 
@@ -20,7 +21,8 @@ function init() {
 	canvas.height = height;
 
 	// Make fish
-	for (let i = 0; i < 5; i++) {
+	school = [];
+	for (let i = 0; i < numFish; i++) {
 		let xPos = width/2 + (Math.random() * 2 - 1) * (width/2 - border);
 		let yPos = height/2 + (Math.random() *2 - 1) * (height/2 - border);
 

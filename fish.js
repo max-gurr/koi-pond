@@ -8,7 +8,7 @@ class Fish {
 	accY;
 
 	maxVel = 1;
-	minVel = 0;
+	minVel = 0.75;
 	maxForce = 0.025;
 
 	tick;
@@ -22,11 +22,6 @@ class Fish {
 		
 		this.velX = this.maxVel * Math.cos(angle);
 		this.velY = this.maxVel * Math.sin(angle);
-
-		// Constrain vel magnitude
-		let vel = this._constrainVector(this.velX, this.velY, this.minVel, this.maxVel);
-		this.velX = vel[0];
-		this.velY = vel[1];
 
 		// Make segs facing opposite to direction of velocity
 		let segmentAngle = angle - Math.PI;
@@ -103,27 +98,31 @@ class Fish {
 		let x = this.segs[0].ax;
 		let y = this.segs[0].ay;
 
-		
-		// Check x vs y edges separately to avoid quick turning
-		if (x < border || (width - x) < border) {
-			let targetX = width/2;
-			let dx = targetX - x;
-			this.accX += dx - this.velX;
-		}
-		if (y < border || (height - y) < border) {
-			let targetY = height/2;
-			let dy = targetY - y;
-			this.accY += dy - this.velY;
-		}
-		
+		let xForce = 0, yForce = 0;
 		
 		/*
+		// Check x vs y edges separately to avoid quick turning
+		if (x < border || (width - x) < border) {
+			let targetX = width/2 + Math.random() * width/2;
+			let dx = targetX - x;
+			
+			xForce = dx - this.velX;
+		}
+		if (y < border || (height - y) < border) {
+			let targetY = height/2 + Math.random() * height/2;
+			let dy = targetY - y;
+			
+			yForce = dy - this.velY;
+		}
+		*/
+		
+		
 		// Push towards centre if at border
 		if (x < border || (width - x) < border || 
 			y < border || (height - y) < border) {
-			let targetX = width/2;
-			let targetY = height/2;
-
+			let targetX = width/2 + (Math.random() * (width/2 - border));
+			let targetY = height/2 + (Math.random() * (height/2 - border));
+			
 			// Vector from current position to desired position
 			// i.e. desired velocity
 			let dx = targetX - x;
@@ -131,10 +130,15 @@ class Fish {
 
 			// Vector from current velocity to desired velocity
 			// i.e. acceleration force towards the desired velocity
-			this.accX += dx - this.velX;
-			this.accY += dy - this.velY;
+			xForce += dx - this.velX;
+			yForce += dy - this.velY;
 		}
-		*/
+		
+
+		Math.acos();
+
+		this.accX += xForce;
+		this.accY += yForce;
 	}
 
 	_moveSegments() {
@@ -205,6 +209,7 @@ class Fish {
 
 	draw() {
 		for (let i = 0; i < this.segs.length; i++) {
+			this.ctx.save();
 			// Use position from tail to adjust size
 			
 			// Largest at second nodule
@@ -213,27 +218,8 @@ class Fish {
 			// Largest at head
 			let sizeFactor = this.segs.length - i;
 
-			this.segs[i].draw(sizeFactor);
-		}
-	}
-
-	_constrainVel() {
-		// Adjust velocity vector to within desired magnitude
-		let currentMag = Math.sqrt(this.velX * this.velX + this.velY * this.velY);
-		let desiredMag = Math.max(this.minVel, Math.min(this.maxVel, currentMag));
-
-		this.velX = desiredMag * this.velX / currentMag
-		this.velY = desiredMag * this.velY / currentMag;
-	}
-
-	_constrainAcc() {
-		// Adjust acceleration vector to within desired magnitude
-		let max = this.maxForce;
-		let mag = Math.sqrt(this.accX * this.accX + this.accY * this.accY);
-		
-		if (mag > max) {
-			this.accX = max * this.accX / mag
-			this.accY = max * this.accY / mag;
+			this.segs[i].draw(sizeFactor, i == 0, i == this.segs.length - 1, i == 0);
+			this.ctx.restore();
 		}
 	}
 }
