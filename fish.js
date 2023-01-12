@@ -99,26 +99,10 @@ class Fish {
 
 		let xForce = 0, yForce = 0;
 		
-		/*
-		// Check x vs y edges separately to avoid quick turning
-		if (x < border || (width - x) < border) {
-			let targetX = width/2 + Math.random() * width/2;
-			let dx = targetX - x;
-			
-			xForce = dx - this.velX;
-		}
-		if (y < border || (height - y) < border) {
-			let targetY = height/2 + Math.random() * height/2;
-			let dy = targetY - y;
-			
-			yForce = dy - this.velY;
-		}
-		*/
-		
-		
 		// Push towards centre if at border
 		if (x < border || (width - x) < border || 
 			y < border || (height - y) < border) {
+			// Random target position
 			let targetX = width/2 + (Math.random() * (width/2 - border));
 			let targetY = height/2 + (Math.random() * (height/2 - border));
 			
@@ -133,9 +117,6 @@ class Fish {
 			yForce += dy - this.velY;
 		}
 		
-
-		Math.acos();
-
 		this.accX += xForce;
 		this.accY += yForce;
 	}
@@ -145,10 +126,10 @@ class Fish {
 		let head = this.segs[0];
 		head.update(this.velX, this.velY);
 
-		// // Wiggle head point of fish directly, 
-		// // 		perpendicular to direction of velocity
+		// Wiggle head point of fish directly, 
+		// 		perpendicular to direction of velocity
 
-		// // Size of wiggle movement
+		// Size of wiggle movement
 		// let adjustSize = 0.1 * Math.sin(this.tick);
 		// let adjustAngle = head.angle - Math.PI/2;
 
@@ -207,21 +188,89 @@ class Fish {
 	}
 
 	draw() {
-		for (let i = 0; i < this.segs.length; i++) {
-			this.ctx.save();
+		const numSegs = this.segs.length;
+		let seg, rightFish = [], leftFish = [];
+
+		for (let i = 0; i < numSegs; i++) {
+			seg = this.segs[i];
+
 			// Use position from tail to adjust size
-			
-			// Largest at second nodule
-			// let sizeFactor = this.segs.length - Math.abs(1 - i);
-			
 			// Largest at head
-			let sizeFactor = this.segs.length - i;
+			let sizeFactor = numSegs - i;
+			let sizeIncrement = 1.5;
+			let minSize = 0;
+
+			// Each segment has a point a and a point b
+			let aWidth = minSize + sizeIncrement * sizeFactor;
+			let bWidth = minSize + sizeIncrement * (sizeFactor-1);
+
+			// Get co-ordinates of points to draw body
+			if (i==0) {
+				// Only draw head of the first segment
+				// For all other segments, the head is a repeat
+				// Of the tail it follows
+				let aPoints = seg.getDrawingPointsA(aWidth);
+				leftFish.push(aPoints[0]);
+				rightFish.push(aPoints[1]);
+			}
 			
-			let drawHead = i==0;
-			let drawFins = i==0;
-			let drawTail = i==this.segs.length-1;
-			this.segs[i].draw(sizeFactor, drawHead, drawTail, drawFins);
-			this.ctx.restore();
+			let bPoints = seg.getDrawingPointsB(bWidth);
+			leftFish.push(bPoints[0]);
+			rightFish.push(bPoints[1]);
+			
+			// Drawing fish bodyparts
+			const drawHead = i==0,
+				  drawFins = i==0,
+				  drawTail = i==numSegs-1;
+
+			if (drawHead || drawFins || drawTail) {
+				this.ctx.save();
+
+				// Transform canvas to head of segment
+				seg.transformToA();
+
+				this.ctx.fillStyle = 'white';
+				this.ctx.strokeStyle = 'white';
+
+				if (drawHead) seg.drawFishHead(aWidth, bWidth);
+				if (drawFins) seg.drawFishFins(aWidth, bWidth);
+
+				// Transform canvas to tail of segment
+				seg.transformToB();
+
+				if (drawTail) seg.drawFishTail(aWidth, bWidth);
+				
+				this.ctx.restore();
+			}
 		}
+
+		// Draw fish body
+		this.drawFishBody(rightFish, leftFish);
+	}
+
+	drawFishBody(rightPoints, leftPoints) {
+		this.ctx.fillStyle = 'white';
+		this.ctx.strokeStyle = 'white';
+		
+		this.ctx.beginPath();
+		this.ctx.moveTo(this.segs[0].ax, this.segs[0].ay);
+
+		let point;
+		// Start drawing at top of right side of fish
+		for (let i = 0; i < rightPoints.length; i++) {
+			point = rightPoints[i];
+			this.ctx.lineTo(point[0], point[1]);
+		}
+		// Path is at tail of right side of fish,
+		// So continuing drawing from tail of left side
+		for (let i = leftPoints.length-1; i >= 0; i--) {
+			point = leftPoints[i];
+			this.ctx.lineTo(point[0], point[1]);
+		}
+		// Path is at top of left side of fish
+
+		this.ctx.fill();
+		this.ctx.stroke();
+		this.ctx.closePath();
 	}
 }

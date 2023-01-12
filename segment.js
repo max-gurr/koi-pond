@@ -67,87 +67,106 @@ class Segment {
 		this.by = this.ay + this.len*Math.sin(this.angle);
 	}
 
-	draw(sizeFactor, drawHead, drawTail, drawFins) {
-		this.ctx.fillStyle = 'white';
-		this.ctx.strokeStyle = 'white';
-
-		// SizeFactor is the position of segment from the tail
-		let sizeIncrement = 1.5;
-		let minSize = 0;
-
-		let aWidth = minSize + sizeIncrement * sizeFactor;
-		let bWidth = minSize + sizeIncrement * (sizeFactor-1);
-
+	transformToA() {
 		// Translate canvas to point a
 		this.ctx.translate(this.ax, this.ay);
 		this.ctx.rotate(this.angle + Math.PI/2);
+	}
+
+	transformToB() {
+		this.ctx.translate(0, -this.len);
+	}
+
+	getDrawingPointsA(aWidth) {
+		let points = [];
+		let offset = Math.PI/2;
+
+		points.push([
+			this.ax + aWidth * Math.cos(this.angle - offset), 
+			this.ay + aWidth * Math.sin(this.angle - offset)
+		]);
+
+		points.push([
+			this.ax + aWidth * Math.cos(this.angle + offset), 
+			this.ay + aWidth * Math.sin(this.angle + offset)
+		]);
+
+		return points;
+	}
+
+	getDrawingPointsB(bWidth) {
+		let points = [];
+		let offset = Math.PI/2;
+
+		points.push([
+			this.bx + bWidth * Math.cos(this.angle -offset), 
+			this.by + bWidth * Math.sin(this.angle - offset)
+		]);
+
+		points.push([
+			this.bx + bWidth * Math.cos(this.angle + offset), 
+			this.by + bWidth * Math.sin(this.angle + offset)
+		]);
+
+		return points;
+	}
+
+	drawFishHead(aWidth, bWidth) {
+		// Draw half-circle for head of fish
+		let curveHeight = aWidth*2;
+		let curveWidth = 0.5*aWidth;
 
 		this.ctx.beginPath();
 
-		// Draw half-circle for head of fish
-		if (drawHead) {
-			let curveHeight = aWidth*2;
-			let curveWidth = 0.5*aWidth;
-
-			this.ctx.moveTo(-aWidth, 0);
-			this.ctx.bezierCurveTo(-curveWidth, curveHeight, curveWidth, curveHeight, aWidth, 0);
-			this.ctx.fill();
-			// this.ctx.stroke();
-		}
-
-		// Draw fish fins
-		if (drawFins) {
-			let finSize = 4;
-			let finX = bWidth*1.3;
-			let finY = this.len/2.5;
-			let finStretch = 1.25;
-
-			// Left fin
-			this.ctx.moveTo(-finX, -finY);
-			this.ctx.quadraticCurveTo(-(finX + finSize), -finY, -(finX+finSize), -(finY+finSize*finStretch));
-			this.ctx.quadraticCurveTo(-finX, -(finY+finSize), -finX, -finY);
-			
-			// Right fin
-			this.ctx.moveTo(finX, -finY);
-			this.ctx.quadraticCurveTo((finX + finSize), -finY, (finX+finSize), -(finY+finSize*finStretch));
-			this.ctx.quadraticCurveTo(finX, -(finY+finSize), finX, -finY);
-			
-			this.ctx.fill(); 
-			this.ctx.stroke();	
-		}
-
-		// Head of segment
 		this.ctx.moveTo(-aWidth, 0);
-		this.ctx.lineTo(aWidth, 0);
-
-		// Adjust canvas to point b
-		this.ctx.translate(0, -this.len);
-
-		// Tail of segment
-		this.ctx.lineTo(bWidth, 0);
-		this.ctx.lineTo(-bWidth, 0);
+		this.ctx.bezierCurveTo(-curveWidth, curveHeight, curveWidth, curveHeight, aWidth, 0);
 		
-		// Draw segment
 		this.ctx.fill();
-		this.ctx.stroke();
+		this.ctx.closePath();
+	}
 
-		// Draw fish tail
-		if (drawTail) {
-			let tailSize = 4;
-			let tailStretch = 1.5;
+	drawFishFins(aWidth, bWidth) {
+		// Draw fish fins
+		let finSize = 4;
+		let finX = bWidth*2;
+		let finY = aWidth/1;
+		let finStretch = 1.25;
 
-			// Left fin
-			this.ctx.moveTo(0, 0);
-			this.ctx.quadraticCurveTo(-tailSize, 0, -tailSize, -tailSize*tailStretch);
-			this.ctx.quadraticCurveTo(0, -tailSize, 0, 0);
-			
-			// Right fin
-			this.ctx.moveTo(0, 0);
-			this.ctx.quadraticCurveTo(tailSize, 0, tailSize, -tailSize*tailStretch);
-			this.ctx.quadraticCurveTo(0, -tailSize, 0, 0);
-			
-			this.ctx.fill(); 
-			this.ctx.stroke();
-		}
+		this.ctx.beginPath();
+
+		// Left fin
+		this.ctx.moveTo(-finX, -finY);
+		this.ctx.quadraticCurveTo(-(finX + finSize), -finY, -(finX+finSize), -(finY+finSize*finStretch));
+		this.ctx.quadraticCurveTo(-finX, -(finY+finSize), -finX, -finY);
+		
+		// Right fin
+		this.ctx.moveTo(finX, -finY);
+		this.ctx.quadraticCurveTo((finX + finSize), -finY, (finX+finSize), -(finY+finSize*finStretch));
+		this.ctx.quadraticCurveTo(finX, -(finY+finSize), finX, -finY);
+		
+		this.ctx.fill(); 
+		this.ctx.closePath();
+	}
+
+	drawFishTail(aWidth, bWidth) {
+		let tailX = 0;
+		let tailY = 0;
+		let tailSize = 5;
+		let tailStretch = 1.5;
+
+		this.ctx.beginPath();
+
+		// Left fin
+		this.ctx.moveTo(tailX, tailY);
+		this.ctx.quadraticCurveTo(-tailSize, 0, -tailSize, -tailSize*tailStretch);
+		this.ctx.quadraticCurveTo(0, -tailSize, 0, 0);
+		
+		// Right fin
+		this.ctx.moveTo(0, 0);
+		this.ctx.quadraticCurveTo(tailSize, 0, tailSize, -tailSize*tailStretch);
+		this.ctx.quadraticCurveTo(0, -tailSize, 0, 0);
+		
+		this.ctx.fill(); 
+		this.ctx.closePath();
 	}
 }
