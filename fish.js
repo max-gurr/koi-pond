@@ -2,13 +2,15 @@ class Fish {
 	ctx;
 	
 	segs;
+	x;
+	y;
 	velX;
 	velY;
 	accX;
 	accY;
 
 	maxVel = 1;
-	minVel = 0.75;
+	minVel = 0.65;
 	maxForce = 0.025;
 
 	tick;
@@ -26,6 +28,7 @@ class Fish {
 		// Make segs facing opposite to direction of velocity
 		let segmentAngle = angle - Math.PI;
 		this.segs = this.constructSegments(this.ctx, x, y, segmentAngle);
+		this._updatePosition();
 
 		this.accX = 0;
 		this.accY = 0;
@@ -83,6 +86,7 @@ class Fish {
 		
 		// Move fish segments
 		this._moveSegments();
+		this._updatePosition();
 		
 		this.accX = this.accX/2;
 		this.accY = this.accY/2;
@@ -92,10 +96,15 @@ class Fish {
 		this.tick = this.tick % (Math.PI * 2);
 	}
 
+	_updatePosition() {
+		this.x = this.segs[0].ax;
+		this.y = this.segs[0].ay;
+	}
+
 	_avoidBorder() {
 		// Use position of head of first segment
-		let x = this.segs[0].ax;
-		let y = this.segs[0].ay;
+		let x = this.x;
+		let y = this.y;
 
 		let xForce = 0, yForce = 0;
 		
@@ -166,7 +175,7 @@ class Fish {
 
 		// Size coefficient for wiggle
 		// Index is an arbitrary multiplier, doesn't need to specifically reference seg/point
-		let startSize = 0.01;
+		let startSize = 0.02;
 		let sizeIncrement = 0.01;
 		let wiggleSize = startSize + (sizeIncrement * index);
 
@@ -196,25 +205,25 @@ class Fish {
 
 			// Use position from tail to adjust size
 			// Largest at head
-			let sizeFactor = numSegs - i;
-			let sizeIncrement = 1.5;
-			let minSize = 0;
+			const sizeFactor = numSegs - i;
+			const sizeIncrement = 1.5;
+			const minSize = 0;
 
 			// Each segment has a point a and a point b
-			let aWidth = minSize + sizeIncrement * sizeFactor;
-			let bWidth = minSize + sizeIncrement * (sizeFactor-1);
+			const aWidth = minSize + sizeIncrement * sizeFactor;
+			const bWidth = minSize + sizeIncrement * (sizeFactor-1);
 
 			// Get co-ordinates of points to draw body
 			if (i==0) {
 				// Only draw head of the first segment
 				// For all other segments, the head is a repeat
 				// Of the tail it follows
-				let aPoints = seg.getDrawingPointsA(aWidth);
+				const aPoints = seg.getDrawingPointsA(aWidth);
 				leftFish.push(aPoints[0]);
 				rightFish.push(aPoints[1]);
 			}
 			
-			let bPoints = seg.getDrawingPointsB(bWidth);
+			const bPoints = seg.getDrawingPointsB(bWidth);
 			leftFish.push(bPoints[0]);
 			rightFish.push(bPoints[1]);
 			
@@ -253,7 +262,7 @@ class Fish {
 		this.ctx.strokeStyle = 'white';
 		
 		this.ctx.beginPath();
-		this.ctx.moveTo(this.segs[0].ax, this.segs[0].ay);
+		this.ctx.moveTo(this.x, this.y);
 
 		let point;
 		// Start drawing at top of right side of fish

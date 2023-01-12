@@ -150,7 +150,7 @@ class Segment {
 
 	drawFishTail(aWidth, bWidth) {
 		let tailX = 0;
-		let tailY = 0;
+		let tailY = -2;
 		let tailSize = 5;
 		let tailStretch = 1.5;
 
@@ -158,13 +158,13 @@ class Segment {
 
 		// Left fin
 		this.ctx.moveTo(tailX, tailY);
-		this.ctx.quadraticCurveTo(-tailSize, 0, -tailSize, -tailSize*tailStretch);
-		this.ctx.quadraticCurveTo(0, -tailSize, 0, 0);
+		this.ctx.quadraticCurveTo(tailX-tailSize, tailY, tailX-tailSize, tailY-tailSize*tailStretch);
+		this.ctx.quadraticCurveTo(tailX, tailY-tailSize, tailX, tailY);
 		
 		// Right fin
-		this.ctx.moveTo(0, 0);
-		this.ctx.quadraticCurveTo(tailSize, 0, tailSize, -tailSize*tailStretch);
-		this.ctx.quadraticCurveTo(0, -tailSize, 0, 0);
+		this.ctx.moveTo(tailX, tailY);
+		this.ctx.quadraticCurveTo(tailX+tailSize, tailY, tailX+tailSize, tailY-tailSize*tailStretch);
+		this.ctx.quadraticCurveTo(tailX, tailY-tailSize, tailX, tailY);
 		
 		this.ctx.fill(); 
 		this.ctx.closePath();

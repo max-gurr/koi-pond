@@ -40,7 +40,8 @@ function init() {
 
 function animate() {
 	// Draw background
-	ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+	const alpha = 0.15;
+	ctx.fillStyle = `rgba(0, 0, 0, ${alpha})`;
 	ctx.fillRect(0, 0, width, height);
 
 	// Do fishy things
