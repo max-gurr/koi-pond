@@ -1,4 +1,11 @@
 class Fish {
+	static maxVel = 1;
+	static minVel = 0.65;
+	static maxForce = 0.025;
+	static neighbourRadius = 50;
+	static neighbourRadiusSq = Fish.neighbourRadius * Fish.neighbourRadius;
+	static neighbourAngle = Math.PI/2;
+	
 	ctx;
 	
 	segs;
@@ -9,9 +16,6 @@ class Fish {
 	accX;
 	accY;
 
-	maxVel = 1;
-	minVel = 0.65;
-	maxForce = 0.025;
 
 	tick;
 
@@ -20,13 +24,13 @@ class Fish {
 
 		// Init with random vel
 		// Random heading
-		let angle = Math.random() * Math.PI * 2;
+		const angle = Math.random() * Math.PI * 2;
 		
-		this.velX = this.maxVel * Math.cos(angle);
-		this.velY = this.maxVel * Math.sin(angle);
+		this.velX = Fish.maxVel * Math.cos(angle);
+		this.velY = Fish.maxVel * Math.sin(angle);
 
 		// Make segs facing opposite to direction of velocity
-		let segmentAngle = angle - Math.PI;
+		const segmentAngle = angle - Math.PI;
 		this.segs = this.constructSegments(this.ctx, x, y, segmentAngle);
 		this._updatePosition();
 
@@ -46,6 +50,7 @@ class Fish {
 		let head = new Segment(ctx, x, y, minLen + lenIncrement*numSegs, angle);
 		segs.push(head);
 
+		let tail;
 		for (let i = 0; i < numSegs-1; i++) {
 			// Adjust length of segment based on position
 
@@ -53,10 +58,10 @@ class Fish {
 			// let lenFactor = numSegs + Math.abs(1 - i);
 			
 			// Longest at head
-			let lenFactor = numSegs - (i+1);
+			const lenFactor = numSegs - (i+1);
 
-			let segLen = minLen + lenIncrement * lenFactor;
-			let tail = new Segment(ctx, head.bx, head.by, segLen, angle);	
+			const segLen = minLen + lenIncrement * lenFactor;
+			tail = new Segment(ctx, head.bx, head.by, segLen, angle);	
 			
 			segs.push(tail);
 
@@ -72,7 +77,7 @@ class Fish {
 		this._avoidBorder();
 
 		// Limit acc force
-		let acc = this._constrainVector(this.accX, this.accY, 0, this.maxForce);
+		const acc = this._constrainVector(this.accX, this.accY, 0, Fish.maxForce);
 		this.accX = acc[0];
 		this.accY = acc[1];
 
@@ -80,7 +85,7 @@ class Fish {
 		this.velY += this.accY;
 
 		// Constrain vel magnitude
-		let vel = this._constrainVector(this.velX, this.velY, this.minVel, this.maxVel);
+		const vel = this._constrainVector(this.velX, this.velY, Fish.minVel, Fish.maxVel);
 		this.velX = vel[0];
 		this.velY = vel[1];
 		
@@ -103,8 +108,8 @@ class Fish {
 
 	_avoidBorder() {
 		// Use position of head of first segment
-		let x = this.x;
-		let y = this.y;
+		const x = this.x;
+		const y = this.y;
 
 		let xForce = 0, yForce = 0;
 		
@@ -112,13 +117,13 @@ class Fish {
 		if (x < border || (width - x) < border || 
 			y < border || (height - y) < border) {
 			// Random target position
-			let targetX = width/2 + (Math.random() * (width/2 - border));
-			let targetY = height/2 + (Math.random() * (height/2 - border));
+			const targetX = width/2 + (Math.random() * (width/2 - border));
+			const targetY = height/2 + (Math.random() * (height/2 - border));
 			
 			// Vector from current position to desired position
 			// i.e. desired velocity
-			let dx = targetX - x;
-			let dy = targetY - y;
+			const dx = targetX - x;
+			const dy = targetY - y;
 
 			// Vector from current velocity to desired velocity
 			// i.e. acceleration force towards the desired velocity
@@ -152,9 +157,10 @@ class Fish {
 		this._driveSegment(0);
 
 		// Update other segs
+		let tail;
 		for (let i = 1; i < this.segs.length; i++) {
 			// Follow the previous segment
-			let tail = this.segs[i];
+			tail = this.segs[i];
 			tail.follow(head.bx, head.by);
 
 			// Wiggle by driving angle
@@ -168,27 +174,27 @@ class Fish {
 		// Angle of wiggle on sine curve
 		// Head and tail of fish should have same wiggle 
 		// So adjust increment by num of points being driven
-		let angleIncrement = -Math.PI/(this.segs.length);
+		const angleIncrement = -Math.PI/(this.segs.length);
 		// Point being driven is tail of current segment
 		// So point number is 1 + segment number
-		let wiggleAngle = this.tick + (angleIncrement * (index+1));
+		const wiggleAngle = this.tick + (angleIncrement * (index+1));
 
 		// Size coefficient for wiggle
 		// Index is an arbitrary multiplier, doesn't need to specifically reference seg/point
-		let startSize = 0.02;
-		let sizeIncrement = 0.01;
-		let wiggleSize = startSize + (sizeIncrement * index);
+		const startSize = 0.015;
+		const sizeIncrement = 0.01;
+		const wiggleSize = startSize + (sizeIncrement * index);
 
 		this.segs[index].driveAngle(wiggleSize, wiggleAngle);
 	}
 
 	_constrainVector(x, y, min, max) {
 		// Constrain vector to within desired magnitude
-		let currentMag = Math.sqrt(x * x + y * y);
-		let desiredMag = Math.max(min, Math.min(max, currentMag));
+		const currentMag = Math.sqrt(x * x + y * y);
+		const desiredMag = Math.max(min, Math.min(max, currentMag));
 
-		let newX = desiredMag * x / currentMag;
-		let newY = desiredMag * y / currentMag;
+		const newX = desiredMag * x / currentMag;
+		const newY = desiredMag * y / currentMag;
 
 		return [
 			newX || 0, 
@@ -254,10 +260,10 @@ class Fish {
 		}
 
 		// Draw fish body
-		this.drawFishBody(rightFish, leftFish);
+		this._drawFishBody(rightFish, leftFish);
 	}
 
-	drawFishBody(rightPoints, leftPoints) {
+	_drawFishBody(rightPoints, leftPoints) {
 		this.ctx.fillStyle = 'white';
 		this.ctx.strokeStyle = 'white';
 		

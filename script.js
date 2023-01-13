@@ -57,10 +57,12 @@ function animate() {
 	ctx.fillRect(0, 0, width, height);
 
 	// Do fishy things
-	school.forEach((fish) => {
+	let fish;
+	for (let i = 0; i < numFish; i++) {
+		fish = school[i];
 		fish.update();
 		fish.draw();
-	});
+	}
 
 	measureFrames();
 
