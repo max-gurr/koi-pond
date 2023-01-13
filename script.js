@@ -38,6 +38,18 @@ function init() {
 	
 }
 
+function measureFrames() {
+	// Measure & display framerate
+	const now = performance.now();
+    while (times.length > 0 && times[0] <= now - 1000) {
+      times.shift();
+    }
+    times.push(now);
+    fps = times.length;
+
+   	document.getElementById("display_framerate").innerHTML = fps;
+}
+
 function animate() {
 	// Draw background
 	const alpha = 0.15;
@@ -50,15 +62,7 @@ function animate() {
 		fish.draw();
 	});
 
-	// Measure & display framerate
-	const now = performance.now();
-    while (times.length > 0 && times[0] <= now - 1000) {
-      times.shift();
-    }
-    times.push(now);
-    fps = times.length;
-
-   	document.getElementById("display_framerate").innerHTML = fps;
+	measureFrames();
 
 	// Cue next animation frame
 	requestAnimationFrame(this.animate.bind(this));
