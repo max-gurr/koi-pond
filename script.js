@@ -1,8 +1,8 @@
 let canvas;
 let ctx;
 let width, height;
-let border = 75;
-let center = 100;
+let border;
+let center;
 let centerSq = center*center;
 
 let numFish = document.getElementById("num_fish").value;
@@ -25,7 +25,7 @@ function init() {
 	height = window.innerHeight;
 
 	center = Math.min(width, height)/5;
-	border = Math.min(width, height)/4;
+	border = 50;
 
 	canvas.width = width;
 	canvas.height = height;
@@ -92,11 +92,13 @@ function animate() {
 					const dx = fish.x - neighbour.x;
 					const dy = fish.y - neighbour.y;
 					const dist = Math.sqrt(dx * dx + dy * dy);
-					// Magnitude of separation is inverse of view distance
-					const separationMagnitude = Fish.neighbourRadius - dist;
-					// Scale distance components by separation magnitude
-					separationX += separationMagnitude * dx/dist;
-					separationY += separationMagnitude * dy/dist;
+					if (dist < Fish.neighbourRadius/2) {
+						// Magnitude of separation is inverse of view distance
+						const separationMagnitude = Fish.neighbourRadius - dist;
+						// Scale distance components by separation magnitude
+						separationX += separationMagnitude * dx/dist;
+						separationY += separationMagnitude * dy/dist;
+					}
 				}
 			}
 
@@ -112,9 +114,9 @@ function animate() {
 				separationX = separationX / neighbourCount;
 				separationY = separationY / neighbourCount;
 
-				// fish.applyAlignment(alignmentX, alignmentY);
-				// fish.applyCohesion(cohesionX, cohesionY);
-				// fish.applySeparation(separationX, separationY);
+				fish.applyAlignment(alignmentX, alignmentY);
+				fish.applyCohesion(cohesionX, cohesionY);
+				fish.applySeparation(separationX, separationY);
 			}
 		}
 
