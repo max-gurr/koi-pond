@@ -113,13 +113,14 @@ class Segment {
 
 	drawFishHead(aWidth, bWidth) {
 		// Draw half-circle for head of fish
-		const curveHeight = aWidth*2;
-		const curveWidth = 0.5*aWidth;
+		const curveHeight = aWidth*2.5;
+		const curveX = aWidth+1;
+		const curveWidth = 0.5*curveX;
 
 		this.ctx.beginPath();
 
-		this.ctx.moveTo(-aWidth, 0);
-		this.ctx.bezierCurveTo(-curveWidth, curveHeight, curveWidth, curveHeight, aWidth, 0);
+		this.ctx.moveTo(-curveX, 0);
+		this.ctx.bezierCurveTo(-curveWidth, curveHeight, curveWidth, curveHeight, curveX, 0);
 		this.ctx.closePath();
 		
 		this.ctx.fill();
@@ -129,7 +130,7 @@ class Segment {
 		// Draw fish fins
 		const finSize = 4;
 		const finX = bWidth*2;
-		const finY = aWidth/1;
+		const finY = aWidth;
 		const finStretch = 1.25;
 
 		this.ctx.beginPath();
