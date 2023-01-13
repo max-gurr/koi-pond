@@ -1,13 +1,15 @@
 class Fish {
 	static maxVel = 1;
 	static minVel = 1;
-	static maxForce = 0.035;
-	static neighbourRadius = 75;
+	static maxForce = 0.025;
+	static neighbourRadius = 100;
 	static neighbourRadiusSq = Fish.neighbourRadius * Fish.neighbourRadius;
-	static neighbourAngle = Math.PI;
-	static alignmentScale = 0.8;
+	static neighbourAngleMax = Math.PI/2;
+	static neighbourAngleMin = 0;
+	static alignmentScale = 0.6;
 	static cohesionScale = 1;
 	static separationScale = 5;
+	static borderScale = 2.5;
 	
 	ctx;
 	
@@ -18,7 +20,6 @@ class Fish {
 	velY;
 	accX;
 	accY;
-
 
 	tick;
 
@@ -80,9 +81,11 @@ class Fish {
 		this._avoidBorder();
 
 		// Limit acc force
-		const acc = this._constrainVector(this.accX, this.accY, 0, Fish.maxForce);
-		this.accX = acc[0];
-		this.accY = acc[1];
+		// const acc = this._constrainVector(this.accX, this.accY, 0, Fish.maxForce);
+		// this.accX = acc[0];
+		// this.accY = acc[1];
+
+		// this._drawVector(this.accX, this.accY, 20);
 
 		this.velX += this.accX;
 		this.velY += this.accY;
@@ -96,8 +99,8 @@ class Fish {
 		this._moveSegments();
 		this._updatePosition();
 		
-		this.accX = this.accX/2;
-		this.accY = this.accY/2;
+		this.accX = 0;
+		this.accY = 0;
 
 		this.tick += 0.1;
 		// Limit value so it doesn't increase to infinity
@@ -110,29 +113,37 @@ class Fish {
 	}
 
 	_avoidBorder() {
-		// Use position of head of first segment
-		const x = this.x;
-		const y = this.y;
-
-		let xForce = 0, yForce = 0;
+		let xVel, yVel, xForce = 0, yForce = 0;
 		
 		// Push towards centre if at border
-		if (x < border || (width - x) < border || 
-			y < border || (height - y) < border) {
-			// Random target position
-			const targetX = width/2 + (Math.random() * (width/2 - border));
-			const targetY = height/2 + (Math.random() * (height/2 - border));
-			
-			// Vector from current position to desired position
-			// i.e. desired velocity
-			const dx = targetX - x;
-			const dy = targetY - y;
+		let distFromBorderX = border - Math.min(this.x, width - this.x);
+		let distFromBorderY = border - Math.min(this.y, height - this.y);
+		// console.log(distFromBorderX, distFromBorderY);
+		if (this.x < border || width - this.x < border ||
+			this.y < border || height - this.y < border
+		) {
+			const targetX = width/2 + (Math.random()*2 - 1) * (width/2 - border)/2;
+			const targetY = height/2 + (Math.random()*2 - 1) * (height/2 - border)/2;
+			const dx = targetX - this.x;
+			const dy = targetY - this.y;
 
+			const distFromCenter = Math.sqrt(dx*dx + dy*dy);
 			// Vector from current velocity to desired velocity
 			// i.e. acceleration force towards the desired velocity
-			xForce += dx - this.velX;
-			yForce += dy - this.velY;
+			xVel = Fish.maxVel * dx / distFromCenter;
+			yVel = Fish.maxVel * dy / distFromCenter;
+
+			xForce = (xVel - this.velX);
+			yForce = (yVel - this.velY);
+
+			let distScale = Math.max(Math.max(distFromBorderX, 1), Math.max(distFromBorderY, 1));
+			const force = this._constrainVector(xForce, yForce, 0, Fish.maxForce);
+
+			xForce = force[0] * Fish.borderScale * distScale/border;
+			yForce = force[1] * Fish.borderScale * distScale/border;
 		}
+
+		this._drawVector(xForce, yForce, 20);
 		
 		this.accX += xForce;
 		this.accY += yForce;
@@ -205,6 +216,98 @@ class Fish {
 		];
 	}
 
+	canSeeNeighbour(neighbour) {
+		// Distance between this fish and neighbour
+		const xDist = neighbour.x - this.x;
+		const yDist = neighbour.y - this.y;
+
+		// Angle between this fish and neighbour
+		const dotProduct = xDist * this.velX + yDist * this.velY;
+		const distMag = Math.sqrt(xDist * xDist + yDist * yDist);
+		const velMag = Math.sqrt(this.velX * this.velX + this.velY * this.velY);
+		const theta = Math.acos(dotProduct/(distMag * velMag));
+
+		// Check if neighbour is visible
+		if (distMag > 0 && 
+			distMag < Fish.neighbourRadius && 
+			theta < Fish.neighbourAngleMax && 
+			theta > Fish.neighbourAngleMin
+		) {
+			// Push away from neighbour if too close
+			// const minDist = Fish.neighbourRadius/4;
+			// if (distMag < minDist) {
+			// 	// Scale is bigger when dist is smaller
+			// 	let scale = (minDist - distMag);
+			// 	// Push away from neighbour
+			// 	let xForce = scale * -xDist/distMag
+			// 	let yForce = scale * -yDist/distMag;
+			// 	// let force = this._constrainVector(xForce, yForce, 0, this.maxVel);
+			// 	this.segs[0].update(xForce, yForce);
+			// }
+
+			// this._lineToNeighbour(neighbour);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	_lineToNeighbour(neighbour) {
+		// Draw line from fish to neighbour
+		this.ctx.strokeStyle = 'red';
+		this.ctx.beginPath();
+		this.ctx.moveTo(this.x, this.y);
+		this.ctx.lineTo(neighbour.x, neighbour.y);
+		this.ctx.closePath();
+		this.ctx.stroke();
+	}
+
+	applyAlignment(alignmentX, alignmentY) {
+		// Force = difference in velocity
+        let xForce = alignmentX - this.velX;
+        let yForce = alignmentY - this.velY;
+
+        // Adjust by behaviour multipler
+        xForce *= Fish.alignmentScale;
+        yForce *= Fish.alignmentScale;
+
+        // Add to acc
+        this.accX += xForce;
+        this.accY += yForce;
+	}
+
+	applyCohesion(cohesionX, cohesionY) {
+		// Desired velocity
+        const dx = cohesionX - this.x;
+        const dy = cohesionY - this.y;
+
+        // Force to get to desired velocity
+        let xForce = dx - this.velX;
+        let yForce = dy - this.velY;
+
+        // Scale by behaviour multiplier
+        xForce *= Fish.cohesionScale;
+        yForce *= Fish.cohesionScale;
+
+        // Add to acceleration
+        this.accX += xForce;
+        this.accY += yForce;
+	}
+
+	applySeparation(separationX, separationY) {
+		// Force = difference in velocity
+		let xForce = separationX - this.velX;
+		let yForce = separationY - this.velY;
+
+		// Adjust by behaviour multiplier
+		xForce *= Fish.separationScale;
+		yForce *= Fish.separationScale;
+
+		// Add to acc
+		this.accX += xForce;
+		this.accY += yForce;
+	}
+
 	draw() {
 		const numSegs = this.segs.length;
 		let seg, rightFish = [], leftFish = [];
@@ -264,6 +367,16 @@ class Fish {
 
 		// Draw fish body
 		this._drawFishBody(rightFish, leftFish);
+		// this._drawVector(this.velX, this.velY, 20);
+	}
+
+	_drawVector(x, y, scale = 1) {
+		this.ctx.strokeStyle = 'blue';
+		this.ctx.beginPath();
+		this.ctx.moveTo(this.x, this.y);
+		this.ctx.lineTo(this.x + x * scale, this.y + y * scale);
+		this.ctx.closePath();
+		this.ctx.stroke();
 	}
 
 	_drawFishBody(rightPoints, leftPoints) {
@@ -290,72 +403,5 @@ class Fish {
 
 		this.ctx.fill();
 		this.ctx.stroke();
-	}
-
-	canSeeNeighbour(neighbour) {
-		const xDist = neighbour.x - this.x;
-		const yDist = neighbour.y - this.y;
-
-		// Distance between this fish and neighbour
-		const magSq = xDist * xDist + yDist * yDist;
-
-		// Angle between this fish and neighbour
-		const dotProduct = xDist * this.velX + yDist * this.velY;
-		const distMag = Math.sqrt(magSq);
-		const velMag = Math.sqrt(this.velX * this.velX + this.velY * this.velY);
-		const theta = Math.acos(dotProduct/(distMag * velMag));
-
-		// Check if neighbour is visible
-		if (magSq > 0 && magSq < Fish.neighbourRadiusSq && theta < Fish.neighbourAngle/2) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	applyAlignment(alignmentX, alignmentY) {
-		// Force = difference in velocity
-        let xForce = alignmentX - this.velX;
-        let yForce = alignmentY - this.velY;
-
-        // Adjust by behaviour multipler
-        xForce *= Fish.alignmentScale;
-        yForce *= Fish.alignmentScale;
-
-        // Add to acc
-        this.accX += xForce;
-        this.accY += yForce;
-	}
-
-	applyCohesion(cohesionX, cohesionY) {
-		// Desired velocity
-        const dx = cohesionX - this.x;
-        const dy = cohesionY - this.y;
-
-        // Force to get to desired velocity
-        let xForce = dx - this.velX;
-        let yForce = dy - this.velY;
-
-        // Scale by behaviour multiplier
-        xForce *= Fish.cohesionScale;
-        yForce *= Fish.cohesionScale;
-
-        // Add to acceleration
-        this.accX += xForce;
-        this.accY += yForce;
-	}
-
-	applySeparation(separationX, separationY) {
-		// Force = difference in velocity
-		let xForce = separationX - this.velX;
-		let yForce = separationY - this.velY;
-
-		// Adjust by behaviour multiplier
-		xForce *= Fish.separationScale;
-		yForce *= Fish.separationScale;
-
-		// Add to acc
-		this.accX += xForce;
-		this.accY += yForce;
 	}
 }
