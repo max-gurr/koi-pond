@@ -43,10 +43,10 @@ class Fish {
 	}
 
 	constructSegments(ctx, x, y, angle) {
-		let minLen = 5;
-		let lenIncrement = 2;
+		const minLen = 5;
+		const lenIncrement = 2;
 
-		let segs = [];
+		const segs = [];
 		let head = new Segment(ctx, x, y, minLen + lenIncrement*numSegs, angle);
 		segs.push(head);
 
@@ -283,9 +283,9 @@ class Fish {
 			this.ctx.lineTo(point[0], point[1]);
 		}
 		// Path is at top of left side of fish
+		this.ctx.closePath();
 
 		this.ctx.fill();
 		this.ctx.stroke();
-		this.ctx.closePath();
 	}
 }

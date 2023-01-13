@@ -25,8 +25,8 @@ class Segment {
 
 		// Move tail towards head
 		// Diff between point a and point b
-		let dx = this.bx - this.ax;
-		let dy = this.by - this.ay;
+		const dx = this.bx - this.ax;
+		const dy = this.by - this.ay;
 
 		// Angle between points
 		this.angle = Math.atan2(dy, dx);
@@ -36,7 +36,7 @@ class Segment {
 	}
 
 	driveAngle(size, theta) {
-		let adjust = size * Math.sin(theta);
+		const adjust = size * Math.sin(theta);
 		
 		// Use wiggle to adjust segment angle
 		this.angle += adjust;
@@ -51,8 +51,8 @@ class Segment {
 		this.ay = y;
 
 		// Distance between new head and old tail
-		let dx = this.bx - this.ax;
-		let dy = this.by - this.ay;
+		const dx = this.bx - this.ax;
+		const dy = this.by - this.ay;
 
 		// New angle between current head and old tail
 		this.angle = Math.atan2(dy, dx);
@@ -78,8 +78,8 @@ class Segment {
 	}
 
 	getDrawingPointsA(aWidth) {
-		let points = [];
-		let offset = Math.PI/2;
+		const points = [];
+		const offset = Math.PI/2;
 
 		points.push([
 			this.ax + aWidth * Math.cos(this.angle - offset), 
@@ -95,8 +95,8 @@ class Segment {
 	}
 
 	getDrawingPointsB(bWidth) {
-		let points = [];
-		let offset = Math.PI/2;
+		const points = [];
+		const offset = Math.PI/2;
 
 		points.push([
 			this.bx + bWidth * Math.cos(this.angle -offset), 
@@ -113,24 +113,24 @@ class Segment {
 
 	drawFishHead(aWidth, bWidth) {
 		// Draw half-circle for head of fish
-		let curveHeight = aWidth*2;
-		let curveWidth = 0.5*aWidth;
+		const curveHeight = aWidth*2;
+		const curveWidth = 0.5*aWidth;
 
 		this.ctx.beginPath();
 
 		this.ctx.moveTo(-aWidth, 0);
 		this.ctx.bezierCurveTo(-curveWidth, curveHeight, curveWidth, curveHeight, aWidth, 0);
+		this.ctx.closePath();
 		
 		this.ctx.fill();
-		this.ctx.closePath();
 	}
 
 	drawFishFins(aWidth, bWidth) {
 		// Draw fish fins
-		let finSize = 4;
-		let finX = bWidth*2;
-		let finY = aWidth/1;
-		let finStretch = 1.25;
+		const finSize = 4;
+		const finX = bWidth*2;
+		const finY = aWidth/1;
+		const finStretch = 1.25;
 
 		this.ctx.beginPath();
 
@@ -144,15 +144,15 @@ class Segment {
 		this.ctx.quadraticCurveTo((finX + finSize), -finY, (finX+finSize), -(finY+finSize*finStretch));
 		this.ctx.quadraticCurveTo(finX, -(finY+finSize), finX, -finY);
 		
-		this.ctx.fill(); 
 		this.ctx.closePath();
+		this.ctx.fill(); 
 	}
 
 	drawFishTail(aWidth, bWidth) {
-		let tailX = 0;
-		let tailY = -2;
-		let tailSize = 5;
-		let tailStretch = 1.5;
+		const tailX = 0;
+		const tailY = -2;
+		const tailSize = 5;
+		const tailStretch = 1.5;
 
 		this.ctx.beginPath();
 
@@ -166,7 +166,7 @@ class Segment {
 		this.ctx.quadraticCurveTo(tailX+tailSize, tailY, tailX+tailSize, tailY-tailSize*tailStretch);
 		this.ctx.quadraticCurveTo(tailX, tailY-tailSize, tailX, tailY);
 		
-		this.ctx.fill(); 
 		this.ctx.closePath();
+		this.ctx.fill(); 
 	}
 }
