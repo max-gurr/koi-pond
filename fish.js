@@ -8,7 +8,7 @@ class Fish {
 	static separationRadius = Fish.neighbourRadius/1.5;
 	static alignmentScale = 0.3;
 	static cohesionScale = 0.4;
-	static separationScale = 0.6;
+	static separationScale = 0.7;
 	static borderScale = 2;
 	
 	ctx;
@@ -102,7 +102,7 @@ class Fish {
 		const accMag = vectorLength(this.accX, this.accY);
 		const scaledAccMag = accMag * 3;
 
-		this.tick += 0.075 + Math.min(0.125, scaledAccMag);
+		this.tick += 0.08 + Math.min(0.14, scaledAccMag);
 
 		// Limit value so it doesn't increase to infinity
 		this.tick = this.tick % (Math.PI * 2);
@@ -273,7 +273,7 @@ class Fish {
 						const dx = this.x - neighbour.x;
 						const dy = this.y - neighbour.y;
 						// Magnitude of separation is inverse of view distance
-						const separationMagnitude = Fish.separationRadius - dist;
+						const separationMagnitude = Fish.neighbourRadius - dist;
 						// Scale distance components by separation magnitude
 						separationX += separationMagnitude * dx/dist;
 						separationY += separationMagnitude * dy/dist;
