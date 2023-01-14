@@ -6,7 +6,7 @@ let border;
 let numFish = document.getElementById("num_fish").value;
 let school;
 let bodyColours = ['rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 128, 0)', 'rgb(249, 226, 15)'];
-let dotColours = ['rgb(0, 0, 0)'];
+let dotColours = ['rgb(255, 255, 255)', 'rgb(0, 0, 0)', 'rgb(255, 128, 0)'];
 
 const times = [];
 let fps;
@@ -33,10 +33,13 @@ function init() {
 		const xPos = width/2 + (Math.random()*2-1) * (width/2 - border);
 		const yPos = height/2 + (Math.random()*2-1) * (height/2 - border);
 
-		const bodyColour = bodyColours[parseInt(Math.random() * bodyColours.length)];
 		const f = new Fish(ctx, xPos, yPos, numSegs=3);
+
+		const bodyColour = bodyColours[parseInt(Math.random() * bodyColours.length)];
 		f.setBodyColour(bodyColour);
-		
+
+		f.setDotColours(dotColours);
+
 		school.push(f);	
 	}
 	
@@ -56,7 +59,7 @@ function measureFrames() {
 
 function animate() {
 	// Draw background
-	const alpha = 0.15;
+	const alpha = 1;
 	ctx.fillStyle = `rgba(10, 35, 40, ${alpha})`;
 	ctx.fillRect(0, 0, width, height);
 

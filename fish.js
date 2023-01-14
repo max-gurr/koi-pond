@@ -8,7 +8,7 @@ class Fish {
 	static separationRadius = Fish.neighbourRadius/1.5;
 	static alignmentScale = 0.3;
 	static cohesionScale = 0.4;
-	static separationScale = 0.8;
+	static separationScale = 0.6;
 	static borderScale = 2;
 	
 	ctx;
@@ -24,6 +24,7 @@ class Fish {
 	tick;
 
 	bodyColour = 'white';
+	dotColours = [];
 
 	constructor(c, x, y, numSegs) {
 		this.ctx = c
@@ -219,7 +220,7 @@ class Fish {
 		// Adjust wiggle size by acceleration magnitude
 		// So fish wiggles more when accelerating
 		const accMag = vectorLength(this.accX, this.accY);
-		const scaledAccMag = Math.min(0.015, accMag/3);
+		const scaledAccMag = Math.min(0.015, accMag/2);
 		// console.log(scaledAccMag);
 		const sizeIncrement = 0.01 + scaledAccMag;
 
@@ -443,6 +444,7 @@ class Fish {
 
 		// Draw fish body
 		this._drawFishBody(rightFish, leftFish);
+		this._drawDots();
 		// this._drawVector(this.velX, this.velY, 20);
 	}
 
@@ -473,13 +475,38 @@ class Fish {
 			this.ctx.lineTo(point[0], point[1]);
 		}
 		// Path is at top of left side of fish
-		this.ctx.closePath();
+		// this.ctx.closePath();
 
 		this.ctx.fill();
 		this.ctx.stroke();
 	}
 
+	_drawDots() {
+		// Go through each stored dot colour
+		for (let i = 0; i < this.dotColours.length; i++) {
+			this.ctx.fillStyle = this.dotColours[i];
+			this.ctx.strokeStyle = this.dotColours[i];
+
+			// Adjust size based on position from head
+			const sizeFactor = this.segs.length - i;
+			const sizeIncrement = 1.25;
+			const minSize = 0.5;
+
+			const size = minSize + sizeIncrement * sizeFactor;
+
+			this.segs[i].drawPointA(size);
+		}
+	}
+
 	setBodyColour(newColour) {
 		this.bodyColour = newColour;
+	}
+
+	setDotColours(colourList) {
+		for (let i = 0; i < this.segs.length; i++) {
+			// Pick a random colour 
+			const randomColour = colourList[parseInt(Math.random() * colourList.length)];
+			this.dotColours[i] = randomColour;
+		}
 	}
 }

@@ -170,4 +170,24 @@ class Segment {
 		this.ctx.closePath();
 		this.ctx.fill(); 
 	}
+
+	drawPointA(size) {
+		this.ctx.beginPath();
+
+		this.ctx.moveTo(this.ax, this.ay);
+		this.ctx.arc(this.ax, this.ay, size, 0, 2*Math.PI);
+
+		this.ctx.closePath();
+		this.ctx.fill();
+	}
+
+	drawPointB(size) {
+		this.ctx.beginPath();
+
+		this.ctx.moveTo(this.bx, this.by);
+		this.ctx.arc(this.bx, this.by, size, 0, 2*Math.PI);
+
+		this.ctx.closePath();
+		this.ctx.fill();
+	}
 }
