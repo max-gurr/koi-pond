@@ -65,60 +65,8 @@ function animate() {
 	let fish, neighbour;
 	for (let i = 0; i < numFish; i++) {
 		fish = school[i];
-		let neighbourCount = 0;
-	    let cohesionX = 0;
-	    let cohesionY = 0;
-	    let alignmentX = 0;
-	    let alignmentY = 0;
-	    let separationX = 0;
-	    let separationY = 0;
-
-		for (let j = 0; j < numFish; j++) {
-			if (i !== j) {
-				neighbour = school[j];
-
-				if (fish.canSeeNeighbour(neighbour)) {
-					neighbourCount += 1;
-					
-					// Alignment
-					alignmentX += neighbour.velX;
-					alignmentY += neighbour.velY;
-
-					// Cohesion
-					cohesionX += neighbour.x;
-					cohesionY += neighbour.y;
-
-					// Separation
-					const dx = fish.x - neighbour.x;
-					const dy = fish.y - neighbour.y;
-					const dist = Math.sqrt(dx * dx + dy * dy);
-					if (dist < Fish.neighbourRadius/2) {
-						// Magnitude of separation is inverse of view distance
-						const separationMagnitude = Fish.neighbourRadius - dist;
-						// Scale distance components by separation magnitude
-						separationX += separationMagnitude * dx/dist;
-						separationY += separationMagnitude * dy/dist;
-					}
-				}
-			}
-
-			// To get average forces across neighbour group
-			// Divide each force component by the number of fish it came from
-			if (neighbourCount > 0) {
-				alignmentX = alignmentX / neighbourCount;
-				alignmentY = alignmentY / neighbourCount;
-
-				cohesionX = cohesionX / neighbourCount;
-				cohesionY = cohesionY / neighbourCount;
-
-				separationX = separationX / neighbourCount;
-				separationY = separationY / neighbourCount;
-
-				fish.applyAlignment(alignmentX, alignmentY);
-				fish.applyCohesion(cohesionX, cohesionY);
-				fish.applySeparation(separationX, separationY);
-			}
-		}
+		
+		fish.flock(school, i);
 
 		fish.update();
 		fish.draw();
