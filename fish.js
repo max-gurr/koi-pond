@@ -23,6 +23,8 @@ class Fish {
 
 	tick;
 
+	bodyColour = 'white';
+
 	constructor(c, x, y, numSegs) {
 		this.ctx = c
 
@@ -386,6 +388,9 @@ class Fish {
 		const numSegs = this.segs.length;
 		let seg, rightFish = [], leftFish = [];
 
+		this.ctx.fillStyle = this.bodyColour;
+		this.ctx.strokeStyle = this.bodyColour;
+
 		for (let i = 0; i < numSegs; i++) {
 			seg = this.segs[i];
 
@@ -424,9 +429,6 @@ class Fish {
 				// Transform canvas to head of segment
 				seg.transformToA();
 
-				this.ctx.fillStyle = 'white';
-				this.ctx.strokeStyle = 'white';
-
 				if (drawHead) seg.drawFishHead(aWidth, bWidth);
 				if (drawFins) seg.drawFishFins(aWidth, bWidth);
 
@@ -454,8 +456,6 @@ class Fish {
 	}
 
 	_drawFishBody(rightPoints, leftPoints) {
-		this.ctx.fillStyle = 'white';
-		this.ctx.strokeStyle = 'white';
 		
 		this.ctx.beginPath();
 		this.ctx.moveTo(this.x, this.y);
@@ -477,5 +477,9 @@ class Fish {
 
 		this.ctx.fill();
 		this.ctx.stroke();
+	}
+
+	setBodyColour(newColour) {
+		this.bodyColour = newColour;
 	}
 }
