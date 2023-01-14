@@ -1,15 +1,15 @@
 class Fish {
-	static maxVel = 1.5;
-	static minVel = 1;
+	static maxVel = 1.25;
+	static minVel = 0.75;
 	static maxForce = 0.002;
 	static neighbourRadius = 50;
-	static neighbourAngleMax = Math.PI/1.5;
-	static neighbourAngleMin = Math.PI/8;
+	static neighbourAngleMax = Math.PI/3;
+	static neighbourAngleMin = 0;
 	static separationRadius = Fish.neighbourRadius/1.5;
-	static alignmentScale = 0.2;
+	static alignmentScale = 0.3;
 	static cohesionScale = 0.4;
 	static separationScale = 0.8;
-	static borderScale = 4;
+	static borderScale = 2;
 	
 	ctx;
 	
@@ -94,9 +94,13 @@ class Fish {
 		this._moveSegments();
 		this._updatePosition();
 		
-		// console.log(vectorLength(this.accX, this.accY));
+		// Adjust tick increment by acceleration magnitude
+		// So fish wiggles faster when accelerating
+		const accMag = vectorLength(this.accX, this.accY);
+		const scaledAccMag = accMag * 3;
 
-		this.tick += 0.1;
+		this.tick += 0.075 + Math.min(0.125, scaledAccMag);
+
 		// Limit value so it doesn't increase to infinity
 		this.tick = this.tick % (Math.PI * 2);
 		
@@ -208,8 +212,15 @@ class Fish {
 
 		// Size coefficient for wiggle
 		// Index is an arbitrary multiplier, doesn't need to specifically reference seg/point
-		const startSize = 0.015;
-		const sizeIncrement = 0.01;
+		const startSize = 0.008;
+
+		// Adjust wiggle size by acceleration magnitude
+		// So fish wiggles more when accelerating
+		const accMag = vectorLength(this.accX, this.accY);
+		const scaledAccMag = Math.min(0.015, accMag/3);
+		// console.log(scaledAccMag);
+		const sizeIncrement = 0.01 + scaledAccMag;
+
 		const wiggleSize = startSize + (sizeIncrement * index);
 
 		this.segs[index].driveAngle(wiggleSize, wiggleAngle);
@@ -228,6 +239,7 @@ class Fish {
 		for (let j = 0; j < numFish; j++) {
 			if (i !== j) {
 				neighbour = school[j];
+				// View from this fish to neighbour
 				const view = this.viewToNeighbour(neighbour);
 				const dist = view[0];
 				const angle = view[1];

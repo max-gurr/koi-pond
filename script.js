@@ -2,16 +2,12 @@ let canvas;
 let ctx;
 let width, height;
 let border;
-let center;
-let centerSq = center*center;
 
 let numFish = document.getElementById("num_fish").value;
 let school;
 
 const times = [];
 let fps;
-
-window.addEventListener("resize", function() {init();})
 
 function init() {
 	// Adjust display
@@ -24,7 +20,6 @@ function init() {
 	width = window.innerWidth;
 	height = window.innerHeight;
 
-	center = Math.min(width, height)/5;
 	border = 50;
 
 	canvas.width = width;
@@ -86,3 +81,10 @@ function adjustNumFish(newValue) {
 
 init();
 animate();
+
+window.addEventListener("resize", init);
+window.onunload = function() {
+    console.log("about to clear event listeners prior to leaving page");
+    window.removeEventListener('resize', init);
+    return;
+}
