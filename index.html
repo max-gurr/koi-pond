@@ -11,25 +11,15 @@
 		<svg version="1.1" xmlns="http://www.w3.org/2000/svg" class="canvas" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
             <defs>
 			    <filter id="water_colour">
-				    <feTurbulence type="fractalNoise" baseFrequency="0.01 0.02" numOctaves="1" />
-			    	<!--
-				    <feColorMatrix in="myTurbulence" type="hueRotate" values="0" result="water">
-						<animate attributeName="values" from="0" to="360" dur="6s" repeatCount="indefinite"/>
-					</feColorMatrix>
-					-->
+				    <feTurbulence type="fractalNoise" baseFrequency="0.005 0.015" numOctaves="1" />
+			    	
 				    <feComposite operator="in" in2="SourceGraphic"/>
 				    <feColorMatrix type="matrix"
-				        values="0   0   0   0   0.05
+				        values="0   0     0     0     0.05
 				                0   0.3   0.1   0.2   0.1
-				                0   0.3   1   0.4   0.3
-				                0   0.3   0.2   0.4   0" />
+				                0   0.3   1     0.4   0.3
+				                0   0.4   0.3   0.4   0.1" />
 			    </filter>
-
-                <filter id="water_displacement">
-                    <feTurbulence id="sea-filter" baseFrequency="0.01 0.02" />
-                    <feDisplacementMap scale="10" in="SourceGraphic"></feDisplacementMap>
-                    <feGaussianBlur in="feDisplacementMap" stdDeviation="1.2" />
-                </filter>
 			  </defs>
 		</svg>
 		<div id="water"/></div>

@@ -64,12 +64,12 @@ function measureFrames() {
 
 function animate() {
 	// Draw background
-	const alpha = 0.2;
+	const alpha = 0.25;
 	ctx.fillStyle = `rgba(30, 65, 90, ${alpha})`;
 	ctx.fillRect(0, 0, width, height);
 
 	// Do fishy things
-	let fish, neighbour;
+	let fish;
 	for (let i = 0; i < numFish; i++) {
 		fish = school[i];
 		
