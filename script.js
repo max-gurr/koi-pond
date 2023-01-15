@@ -65,7 +65,7 @@ function measureFrames() {
 function animate() {
 	// Draw background
 	const alpha = 1;
-	ctx.fillStyle = `rgba(10, 35, 40, ${alpha})`;
+	ctx.fillStyle = `rgba(30, 65, 90, ${alpha})`;
 	ctx.fillRect(0, 0, width, height);
 
 	// Do fishy things

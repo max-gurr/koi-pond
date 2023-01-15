@@ -8,6 +8,23 @@
 		<link href="style.css" type="text/css" rel="stylesheet"/>
 	</head>
 	<body>
+		<svg version="1.1" xmlns="http://www.w3.org/2000/svg" class="canvas" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
+            <defs>
+			    <filter id="turbulence">
+				      <feTurbulence type="fractalNoise" result="myTurbulence" baseFrequency="0.01 0.02" numOctaves="1" />
+				      <feColorMatrix in="myTurbulence" type="hueRotate" values="0" result="water">
+					    <animate attributeName="values" from="0" to="360" dur="6s" repeatCount="indefinite"/>
+					  </feColorMatrix>
+				      <feComposite operator="in" in="water" in2="SourceGraphic" result="myComposite"/>
+				      <feColorMatrix in="myComposite" type="matrix"
+				        values="0   0   0   0   0.05
+				                0   0.2   0.1   0.2   0.1
+				                0   0.3   1   0.4   0.3
+				                0   0.3   0.2   0.4   0" />
+			    </filter>
+			  </defs>
+		</svg>
+		<div id="water"/></div>
 		<canvas id="canvas"></canvas>
 		<div class="controls">
 			<label for="num_fish">Fish: <span id="display_num_fish"></span></label>
