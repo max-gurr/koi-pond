@@ -7,7 +7,7 @@ class Fish {
 	static neighbourAngleMin = 0;
 	static separationRadius = Fish.neighbourRadius/1.5;
 	static alignmentScale = 0.3;
-	static cohesionScale = 0.4;
+	static cohesionScale = 0.5;
 	static separationScale = 0.7;
 	static borderScale = 2;
 	
@@ -50,7 +50,7 @@ class Fish {
 	}
 
 	constructSegments(x, y, angle, numSegs) {
-		const minLen = 5;
+		const minLen = 4;
 		const lenIncrement = 2;
 
 		const segs = [];
@@ -119,21 +119,22 @@ class Fish {
 
 	_wrapEdges() {
 		// Adjust position to be inside of screen
+		const offset = border * 3;
 		let xAdjust = 0, yAdjust = 0;
 		if (this.x < -border) {
 			// Fish is off left side of screen
-            xAdjust += width + border*2;
+            xAdjust += width + offset;
         } else if (this.x > width + border) {
         	// Fish is off right side of screen
-            xAdjust -= (width + border*2);
+            xAdjust -= (width + offset);
         }
 
         if (this.y < -border) {
         	// Fish is off top of screen
-            yAdjust += height + border*2;
+            yAdjust += height + offset;
         } else if (this.y > height + border) {
         	// Fish is off bottom of screen
-            yAdjust -= (height + border*2);
+            yAdjust -= (height + offset);
         }
 
         this.segs[0].ax += xAdjust;
@@ -490,7 +491,7 @@ class Fish {
 
 			// Adjust size based on position from head
 			const sizeFactor = this.segs.length - i;
-			const sizeIncrement = 1.4;
+			const sizeIncrement = 1.3;
 			const minSize = 0.5;
 
 			const size = minSize + sizeIncrement * sizeFactor;

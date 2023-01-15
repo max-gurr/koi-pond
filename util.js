@@ -27,6 +27,6 @@ function _gaussianRand(sample) {
 }
 
 function gaussianRandom(start, end) {
-	const rand = _gaussianRand(6);
+	const rand = _gaussianRand(10);
   	return Math.floor(start + rand * (end - start + 1));
 }

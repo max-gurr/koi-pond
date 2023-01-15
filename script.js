@@ -29,12 +29,13 @@ function init() {
 
 	// Make fish
 	school = [];
+	const minSegs = 2;
+	const maxSegs = 5;
 	for (let i = 0; i < numFish; i++) {
 		const xPos = width/2 + (Math.random()*2-1) * (width/2 - border);
 		const yPos = height/2 + (Math.random()*2-1) * (height/2 - border);
 
-		const numSegs = parseInt(gaussianRandom(2, 5));
-		console.log(numSegs);
+		const numSegs = parseInt(gaussianRandom(minSegs, maxSegs));
 
 		const f = new Fish(ctx, xPos, yPos, numSegs);
 
