@@ -1,7 +1,7 @@
 class Fish {
 	static maxVel = 1.25;
 	static minVel = 0.75;
-	static maxForce = 0.0015;
+	static maxForce = 0.002;
 	static neighbourRadius = 50;
 	static neighbourAngleMax = Math.PI/2;
 	static neighbourAngleMin = 0;
@@ -10,6 +10,7 @@ class Fish {
 	static cohesionScale = 0.5;
 	static separationScale = 0.7;
 	static borderScale = 1.5;
+	static foodScale = 6;
 	
 	ctx;
 	
@@ -385,6 +386,52 @@ class Fish {
 		// Adjust by behaviour multiplier
 		xForce = force[0] * Fish.separationScale;
 		yForce = force[1] * Fish.separationScale;
+
+		// Add to acc
+		this.accX += xForce;
+		this.accY += yForce;
+	}
+
+	seekFood(food) {
+		let closestFood = null;
+		let closestDistance = 10000000;
+		let f;
+
+		for (let i = 0; i < food.length; i++) {
+			f = food[i];
+			const dx = f[0] - this.x;
+			const dy = f[1] - this.y;
+
+			const dist = vectorLength(dx, dy);
+
+			if (dist < closestDistance) {
+				closestDistance = dist;
+				closestFood = [dx, dy];
+
+				if (dist < 5) {
+					eatFood(i);
+				}
+			}
+		}
+
+		if (closestFood != null) {
+			this.seek(closestFood[0], closestFood[1]);
+		}
+	}
+
+	seek(x, y) {
+		// Normalise
+		const normalised = constrainVector(x, y, 0, 1);
+
+		// Force = difference in velocity
+		let xForce = normalised[0] * Fish.maxVel - this.velX;
+		let yForce = normalised[1] * Fish.maxVel - this.velY;
+
+		let force = constrainVector(xForce, yForce, 0, Fish.maxForce);
+
+		// Adjust by behaviour multiplier
+		xForce = force[0] * Fish.foodScale;
+		yForce = force[1] * Fish.foodScale;
 
 		// Add to acc
 		this.accX += xForce;

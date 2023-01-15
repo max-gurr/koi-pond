@@ -8,6 +8,8 @@ let school;
 let bodyColours = ['rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 128, 0)', 'rgb(249, 226, 15)'];
 let dotColours = ['rgb(255, 255, 255)', 'rgb(0, 0, 0)', 'rgb(255, 128, 0)', 'rgb(249, 226, 15)'];
 
+let food;
+
 const times = [];
 let fps;
 
@@ -48,6 +50,7 @@ function init() {
 		school.push(f);	
 	}
 	
+	food = [];
 }
 
 function measureFrames() {
@@ -68,12 +71,24 @@ function animate() {
 	ctx.fillStyle = `rgba(30, 65, 90, ${alpha})`;
 	ctx.fillRect(0, 0, width, height);
 
+	// Draw food
+	ctx.fillStyle = 'red';
+	ctx.beginPath();
+	food.forEach(f => {
+		ctx.moveTo(f[0], f[1]);
+		ctx.arc(f[0], f[1], 5, 0, 2*Math.PI);
+	});
+	ctx.closePath();
+	ctx.fill();
+
 	// Do fishy things
 	let fish;
 	for (let i = 0; i < numFish; i++) {
 		fish = school[i];
 		
 		fish.flock(school, i);
+
+		fish.seekFood(food);
 
 		fish.update();
 		fish.draw();
@@ -90,13 +105,23 @@ function adjustNumFish(newValue) {
 	init();
 }
 
+function placeFood(event) {
+	food.push([event.clientX, event.clientY]);
+}
+
+function eatFood(index) {
+	food.splice(index, 1);
+}
+
 
 init();
 animate();
 
-window.addEventListener("resize", init);
+
+document.body.addEventListener("mousedown", placeFood);
 window.onunload = function() {
     console.log("about to clear event listeners prior to leaving page");
     window.removeEventListener('resize', init);
+    document.body.removeEventListener("mousedown", placeFood);
     return;
 }
