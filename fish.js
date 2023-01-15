@@ -1,16 +1,16 @@
 class Fish {
 	static maxVel = 1.25;
 	static minVel = 0.75;
-	static maxForce = 0.002;
+	static maxForce = 0.0015;
 	static neighbourRadius = 50;
 	static neighbourAngleMax = Math.PI/2;
 	static neighbourAngleMin = 0;
 	static separationRadius = Fish.neighbourRadius/1.5;
 	static alignmentScale = 0.3;
 	static cohesionScale = 0.5;
-	static separationScale = 0.7;
+	static separationScale = 1;
 	static borderScale = 1.5;
-	static foodScale = 6;
+	static foodScale = 8;
 	
 	ctx;
 	
@@ -120,7 +120,7 @@ class Fish {
 
 	_wrapEdges() {
 		// Adjust position to be inside of screen
-		const offset = border * 3;
+		const offset = border * 2;
 		let xAdjust = 0, yAdjust = 0;
 		if (this.x < -border) {
 			// Fish is off left side of screen
@@ -138,8 +138,13 @@ class Fish {
             yAdjust -= (height + offset);
         }
 
-        this.segs[0].ax += xAdjust;
-        this.segs[0].ay += yAdjust;
+        if (xAdjust !== 0 || yAdjust !== 0) {
+
+        	const newX = this.segs[0].ax + xAdjust;
+        	const newY = this.segs[0].ay + yAdjust;
+
+        	this.segs = this.constructSegments(newX, newY, this.segs[0].angle, this.segs.length);
+		}
 	}
 
 	_avoidBorder() {
@@ -410,16 +415,19 @@ class Fish {
 
 				if (dist < 5) {
 					eatFood(i);
+					// console.log(this.segs.length);
+					this.segs = this.constructSegments(this.x, this.y, this.segs[0].angle, this.segs.length+1);
+					
 				}
 			}
 		}
 
 		if (closestFood != null) {
-			this.seek(closestFood[0], closestFood[1]);
+			this.seek(closestFood[0], closestFood[1], Fish.foodScale);
 		}
 	}
 
-	seek(x, y) {
+	seek(x, y, scale) {
 		// Normalise
 		const normalised = constrainVector(x, y, 0, 1);
 
@@ -430,8 +438,8 @@ class Fish {
 		let force = constrainVector(xForce, yForce, 0, Fish.maxForce);
 
 		// Adjust by behaviour multiplier
-		xForce = force[0] * Fish.foodScale;
-		yForce = force[1] * Fish.foodScale;
+		xForce = force[0] * scale;
+		yForce = force[1] * scale;
 
 		// Add to acc
 		this.accX += xForce;

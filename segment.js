@@ -152,8 +152,8 @@ class Segment {
 	drawFishTail(aWidth, bWidth) {
 		const tailX = 0;
 		const tailY = -bWidth/3;
-		const tailSize = 4 + aWidth/2;
-		const tailStretch = 0.25 + aWidth/4;
+		const tailSize = 5 + bWidth/1.5;
+		const tailStretch = 0.25 + aWidth/5;
 
 		this.ctx.beginPath();
 
