@@ -38,7 +38,7 @@ class Fish {
 
 		// Make segs facing opposite to direction of velocity
 		const segmentAngle = angle - Math.PI;
-		this.segs = this.constructSegments(this.ctx, x, y, segmentAngle);
+		this.segs = this.constructSegments(x, y, segmentAngle, numSegs);
 		this._updatePosition();
 
 		this.accX = 0;
@@ -49,12 +49,12 @@ class Fish {
 		this.tick = Math.random() * Math.PI
 	}
 
-	constructSegments(ctx, x, y, angle) {
+	constructSegments(x, y, angle, numSegs) {
 		const minLen = 5;
 		const lenIncrement = 2;
 
 		const segs = [];
-		let head = new Segment(ctx, x, y, minLen + lenIncrement*numSegs, angle);
+		let head = new Segment(this.ctx, x, y, minLen + lenIncrement*numSegs, angle);
 		segs.push(head);
 
 		let tail;
@@ -214,16 +214,17 @@ class Fish {
 		const wiggleAngle = this.tick + (angleIncrement * (index+1));
 
 		// Size coefficient for wiggle
-		// Index is an arbitrary multiplier, doesn't need to specifically reference seg/point
-		const startSize = 0.008;
+		// Adjust by length of fish so small fish wiggle more per segment
+		const startSize = 0.03/this.segs.length;
 
 		// Adjust wiggle size by acceleration magnitude
 		// So fish wiggles more when accelerating
 		const accMag = vectorLength(this.accX, this.accY);
 		const scaledAccMag = Math.min(0.015, accMag/2);
 		// console.log(scaledAccMag);
-		const sizeIncrement = 0.01 + scaledAccMag;
+		const sizeIncrement = 0.03/this.segs.length + scaledAccMag;
 
+		// Index is an arbitrary multiplier, doesn't need to specifically reference seg/point
 		const wiggleSize = startSize + (sizeIncrement * index);
 
 		this.segs[index].driveAngle(wiggleSize, wiggleAngle);
@@ -326,7 +327,7 @@ class Fish {
 
 	applyAlignment(alignmentX, alignmentY) {
 		// Normalise
-		const alignment = constrainVector(alignmentX, alignmentY, 1, 1);
+		const alignment = constrainVector(alignmentX, alignmentY, 0, 1);
 
 		// Force = difference in velocity
 		let xForce = alignment[0] * Fish.maxVel - this.velX;
@@ -350,7 +351,7 @@ class Fish {
         const dy = cohesionY - this.y;
 
         // Normalise
-        const cohesion = constrainVector(cohesionX, cohesionY, 1, 1);
+        const cohesion = constrainVector(cohesionX, cohesionY, 0, 1);
         // Force to get to desired velocity
         let xForce = cohesion[0] * Fish.maxVel - this.velX;
         let yForce = cohesion[1] * Fish.maxVel - this.velY;
@@ -368,7 +369,7 @@ class Fish {
 
 	applySeparation(separationX, separationY) {
 		// Normalise
-		const separation = constrainVector(separationX, separationY, 1, 1);
+		const separation = constrainVector(separationX, separationY, 0, 1);
 
 		// Force = difference in velocity
 		let xForce = separation[0] * Fish.maxVel - this.velX;
@@ -489,7 +490,7 @@ class Fish {
 
 			// Adjust size based on position from head
 			const sizeFactor = this.segs.length - i;
-			const sizeIncrement = 1.25;
+			const sizeIncrement = 1.4;
 			const minSize = 0.5;
 
 			const size = minSize + sizeIncrement * sizeFactor;

@@ -33,7 +33,10 @@ function init() {
 		const xPos = width/2 + (Math.random()*2-1) * (width/2 - border);
 		const yPos = height/2 + (Math.random()*2-1) * (height/2 - border);
 
-		const f = new Fish(ctx, xPos, yPos, numSegs=3);
+		const numSegs = parseInt(gaussianRandom(2, 5));
+		console.log(numSegs);
+
+		const f = new Fish(ctx, xPos, yPos, numSegs);
 
 		const bodyColour = bodyColours[parseInt(Math.random() * bodyColours.length)];
 		f.setBodyColour(bodyColour);
@@ -59,7 +62,7 @@ function measureFrames() {
 
 function animate() {
 	// Draw background
-	const alpha = 0.15;
+	const alpha = 1;
 	ctx.fillStyle = `rgba(10, 35, 40, ${alpha})`;
 	ctx.fillRect(0, 0, width, height);
 

@@ -15,3 +15,18 @@ function constrainVector(x, y, min, max) {
 function vectorLength(x, y) {
 	return Math.sqrt(x*x + y*y);
 }
+
+function _gaussianRand(sample) {
+  let rand = 0;
+
+  for (let i = 0; i < sample; i += 1) {
+    rand += Math.random();
+  }
+
+  return (rand / sample);
+}
+
+function gaussianRandom(start, end) {
+	const rand = _gaussianRand(6);
+  	return Math.floor(start + rand * (end - start + 1));
+}
