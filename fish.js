@@ -101,7 +101,7 @@ class Fish {
 		// Adjust tick increment by acceleration magnitude
 		// So fish wiggles faster when accelerating
 		const accMag = vectorLength(this.accX, this.accY);
-		const scaledAccMag = accMag * 3;
+		const scaledAccMag = accMag * 2;
 
 		this.tick += 0.08 + Math.min(0.14, scaledAccMag);
 
@@ -267,7 +267,7 @@ class Fish {
 				const isRepelledByNeighbour = dist > 0 && 
 					dist <= Fish.separationRadius;
 
-				if (isAttractedToNeighbour) {
+				if (isAttractedToNeighbour || isRepelledByNeighbour) {
 					neighbourCount += 1;
 					
 					if (isAttractedToNeighbour) {
