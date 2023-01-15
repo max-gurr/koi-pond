@@ -1,7 +1,7 @@
 class Fish {
 	static maxVel = 1.25;
 	static minVel = 0.75;
-	static maxForce = 0.002;
+	static maxForce = 0.0015;
 	static neighbourRadius = 50;
 	static neighbourAngleMax = Math.PI/2;
 	static neighbourAngleMin = 0;
@@ -223,7 +223,7 @@ class Fish {
 		const accMag = vectorLength(this.accX, this.accY);
 		const scaledAccMag = Math.min(0.015, accMag/2);
 		// console.log(scaledAccMag);
-		const sizeIncrement = 0.04/this.segs.length + scaledAccMag;
+		const sizeIncrement = 0.03/this.segs.length + scaledAccMag;
 
 		// Index is an arbitrary multiplier, doesn't need to specifically reference seg/point
 		const wiggleSize = startSize + (sizeIncrement * index);
@@ -249,10 +249,14 @@ class Fish {
 				const dist = view[0];
 				const angle = view[1];
 
+				// For alignment & cohesion,
+				// Only go towards fish that are inside view angle
 				const isAttractedToNeighbour = dist > 0 && 
 					dist < Fish.neighbourRadius && 
 					angle < Fish.neighbourAngleMax && 
 					angle > Fish.neighbourAngleMin
+				// For separation 
+				// Repel all nearby fish
 				const isRepelledByNeighbour = dist > 0 && 
 					dist < Fish.separationRadius;
 
