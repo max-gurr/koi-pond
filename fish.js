@@ -9,7 +9,7 @@ class Fish {
 	static alignmentScale = 0.3;
 	static cohesionScale = 0.5;
 	static separationScale = 0.7;
-	static borderScale = 2;
+	static borderScale = 1.5;
 	
 	ctx;
 	
@@ -432,13 +432,15 @@ class Fish {
 				// Transform canvas to head of segment
 				seg.transformToA();
 
+				const aWidthSized = aWidth + this.segs.length;
+				const bWidthSized = bWidth + this.segs.length;
 				if (drawHead) seg.drawFishHead(aWidth, bWidth);
-				if (drawFins) seg.drawFishFins(aWidth, bWidth);
+				if (drawFins) seg.drawFishFins(aWidth, bWidthSized);
 
 				// Transform canvas to tail of segment
 				seg.transformToB();
 
-				if (drawTail) seg.drawFishTail(aWidth, bWidth);
+				if (drawTail) seg.drawFishTail(aWidthSized, bWidthSized);
 				
 				this.ctx.restore();
 			}

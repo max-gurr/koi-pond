@@ -128,8 +128,8 @@ class Segment {
 
 	drawFishFins(aWidth, bWidth) {
 		// Draw fish fins
-		const finSize = 4;
-		const finX = bWidth*2;
+		const finSize = aWidth;
+		const finX = aWidth*0.5 + bWidth*0.5;
 		const finY = aWidth;
 		const finStretch = 1.25;
 
@@ -151,9 +151,9 @@ class Segment {
 
 	drawFishTail(aWidth, bWidth) {
 		const tailX = 0;
-		const tailY = -2;
-		const tailSize = 5;
-		const tailStretch = 1.5;
+		const tailY = -bWidth/3;
+		const tailSize = 4 + aWidth/2;
+		const tailStretch = 0.25 + aWidth/4;
 
 		this.ctx.beginPath();
 
