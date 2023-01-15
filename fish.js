@@ -8,8 +8,8 @@ class Fish {
 	static separationRadius = Fish.neighbourRadius/1.5;
 	static alignmentScale = 0.3;
 	static cohesionScale = 0.5;
-	static separationScale = 1;
-	static borderScale = 1.5;
+	static separationScale = 1.5;
+	static borderScale = 2;
 	static foodScale = 8;
 	
 	ctx;
@@ -259,15 +259,15 @@ class Fish {
 				// For alignment & cohesion,
 				// Only go towards fish that are inside view angle
 				const isAttractedToNeighbour = dist > 0 && 
-					dist < Fish.neighbourRadius && 
-					angle < Fish.neighbourAngleMax && 
-					angle > Fish.neighbourAngleMin
+					dist <= Fish.neighbourRadius && 
+					angle <= Fish.neighbourAngleMax && 
+					angle >= Fish.neighbourAngleMin
 				// For separation 
 				// Repel all nearby fish
 				const isRepelledByNeighbour = dist > 0 && 
-					dist < Fish.separationRadius;
+					dist <= Fish.separationRadius;
 
-				if (isAttractedToNeighbour || isRepelledByNeighbour) {
+				if (isAttractedToNeighbour) {
 					neighbourCount += 1;
 					
 					if (isAttractedToNeighbour) {
