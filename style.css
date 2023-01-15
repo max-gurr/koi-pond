@@ -40,7 +40,7 @@ svg {
 	min-width: 100%;
 	min-height: 100%;
 	position: absolute;
-	z-index: -5;
+	z-index: 0;
 	background-color: white;
 	filter: url(#water_colour);
 }

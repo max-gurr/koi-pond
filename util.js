@@ -27,7 +27,7 @@ function _gaussianRand(sample) {
 }
 
 function gaussianRandom(start, end) {
-	const resolution = 4;
+	const resolution = 5;
 	const rand = _gaussianRand(resolution);
   	return Math.floor(start + rand * (end - start + 1));
 }
