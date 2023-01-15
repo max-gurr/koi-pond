@@ -118,10 +118,14 @@ init();
 animate();
 
 
+window.addEventListener("resize", init);
 document.body.addEventListener("mousedown", placeFood);
+
 window.onunload = function() {
     console.log("about to clear event listeners prior to leaving page");
+    
     window.removeEventListener('resize', init);
     document.body.removeEventListener("mousedown", placeFood);
+    
     return;
 }

@@ -138,11 +138,12 @@ class Fish {
             yAdjust -= (height + offset);
         }
 
+        // Check if adjustment is needed
         if (xAdjust !== 0 || yAdjust !== 0) {
-
         	const newX = this.segs[0].ax + xAdjust;
         	const newY = this.segs[0].ay + yAdjust;
 
+        	// Reset segments based on new position, to avoid turnaround
         	this.segs = this.constructSegments(newX, newY, this.segs[0].angle, this.segs.length);
 		}
 	}
@@ -220,6 +221,7 @@ class Fish {
 		// So point number is 1 + segment number
 		const wiggleAngle = this.tick + (angleIncrement * (index+1));
 
+
 		// Size coefficient for wiggle
 		// Adjust by length of fish so small fish wiggle more per segment
 		const startSize = 0.03/this.segs.length;
@@ -228,7 +230,6 @@ class Fish {
 		// So fish wiggles more when accelerating
 		const accMag = vectorLength(this.accX, this.accY);
 		const scaledAccMag = Math.min(0.015, accMag/2);
-		// console.log(scaledAccMag);
 		const sizeIncrement = 0.03/this.segs.length + scaledAccMag;
 
 		// Index is an arbitrary multiplier, doesn't need to specifically reference seg/point
@@ -414,10 +415,7 @@ class Fish {
 				closestFood = [dx, dy];
 
 				if (dist < 5) {
-					eatFood(i);
-					// console.log(this.segs.length);
-					this.segs = this.constructSegments(this.x, this.y, this.segs[0].angle, this.segs.length+1);
-					
+					eatFood(i);					
 				}
 			}
 		}
