@@ -1,5 +1,5 @@
 class Fish {
-	static maxVel = 1.25;
+	static maxVel = 1.4;
 	static minVel = 0.75;
 	static maxForce = 0.0015;
 	static neighbourRadius = 50;
@@ -229,7 +229,7 @@ class Fish {
 		// Adjust wiggle size by acceleration magnitude
 		// So fish wiggles more when accelerating
 		const accMag = vectorLength(this.accX, this.accY);
-		const scaledAccMag = Math.min(0.015, accMag/2);
+		const scaledAccMag = Math.min(0.015, accMag/3);
 		const sizeIncrement = 0.03/this.segs.length + scaledAccMag;
 
 		// Index is an arbitrary multiplier, doesn't need to specifically reference seg/point
