@@ -399,27 +399,34 @@ class Fish {
 	}
 
 	seekFood(food) {
+		// Only seek out the closest food
 		let closestFood = null;
 		let closestDistance = 10000000;
 		let f;
 
 		for (let i = 0; i < food.length; i++) {
 			f = food[i];
+			// Distance to food from this fish
 			const dx = f[0] - this.x;
 			const dy = f[1] - this.y;
 
 			const dist = vectorLength(dx, dy);
 
+			// Keep track of the min distance to any food item
 			if (dist < closestDistance) {
 				closestDistance = dist;
 				closestFood = [dx, dy];
 
+				// Eat food if on top of it
 				if (dist < 5) {
-					eatFood(i);					
+					eatFood(i);
+					closestFood = null;
+					break;				
 				}
 			}
 		}
 
+		// Seek out the closest food item, if any
 		if (closestFood != null) {
 			this.seek(closestFood[0], closestFood[1], Fish.foodScale);
 		}
