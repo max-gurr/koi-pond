@@ -101,9 +101,9 @@ class Fish {
 		// Adjust tick increment by acceleration magnitude
 		// So fish wiggles faster when accelerating
 		const accMag = vectorLength(this.accX, this.accY);
-		const scaledAccMag = accMag * 2;
+		const scaledAccMag = accMag * 1.25;
 
-		this.tick += 0.08 + Math.min(0.14, scaledAccMag);
+		this.tick += 0.075 + Math.min(0.14, scaledAccMag);
 
 		// Limit value so it doesn't increase to infinity
 		this.tick = this.tick % (Math.PI * 2);
@@ -229,7 +229,7 @@ class Fish {
 		// Adjust wiggle size by acceleration magnitude
 		// So fish wiggles more when accelerating
 		const accMag = vectorLength(this.accX, this.accY);
-		const scaledAccMag = Math.min(0.015, accMag/3);
+		const scaledAccMag = Math.min(0.015, accMag/2.5);
 		const sizeIncrement = 0.03/this.segs.length + scaledAccMag;
 
 		// Index is an arbitrary multiplier, doesn't need to specifically reference seg/point
