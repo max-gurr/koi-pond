@@ -562,6 +562,10 @@ class Fish {
 	_drawDots() {
 		// Go through each stored dot colour
 		for (let i = 0; i < this.dotColours.length; i++) {
+			if (this.dotColours[i] == "null") {
+				continue;
+			}
+			
 			this.ctx.fillStyle = this.dotColours[i];
 			this.ctx.strokeStyle = this.dotColours[i];
 

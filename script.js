@@ -5,8 +5,23 @@ let border;
 
 let numFish = document.getElementById("num_fish").value;
 let school;
-let bodyColours = ['rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 128, 0)', 'rgb(249, 226, 15)'];
-let dotColours = ['rgb(255, 255, 255)', 'rgb(0, 0, 0)', 'rgb(255, 128, 0)', 'rgb(249, 226, 15)'];
+let bodyColours = ['rgb(255, 255, 255)', 
+				   'rgb(255, 255, 255)', 
+				   'rgb(255, 255, 255)', 
+				   'rgb(255, 128, 0)',
+				   'rgb(255, 128, 0)',
+				   'rgb(249, 226, 15)'
+				  ];
+let dotColours = ['rgb(255, 255, 255)', 
+				  'rgb(0, 0, 0)', 
+				  'rgb(255, 128, 0)', 
+				  'rgb(249, 226, 15)',
+				  'null',
+				  'null',
+				  'null',
+				  'null',
+				  'null',
+				 ];
 
 let food;
 
