@@ -32,7 +32,7 @@ function init() {
 	// Make fish
 	school = [];
 	const minSegs = 2;
-	const maxSegs = 5;
+	const maxSegs = 6;
 	for (let i = 0; i < numFish; i++) {
 		// Generate position
 		const xPos = width/2 + (Math.random()*2-1) * (width/2 - border);

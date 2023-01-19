@@ -1,5 +1,5 @@
 class Fish {
-	static maxVel = 1.4;
+	static maxVel = 1.5;
 	static minVel = 0.75;
 	static maxForce = 0.0015;
 	static neighbourRadius = 50;
@@ -11,6 +11,7 @@ class Fish {
 	static separationScale = 1.5;
 	static borderScale = 2;
 	static foodScale = 8;
+	static grow = false;
 	
 	ctx;
 	
@@ -421,6 +422,11 @@ class Fish {
 				if (dist < 5) {
 					eatFood(i);
 					closestFood = null;
+
+					if (Fish.grow) {
+						this.grow(1);
+					}
+
 					break;				
 				}
 			}
@@ -430,6 +436,10 @@ class Fish {
 		if (closestFood != null) {
 			this.seek(closestFood[0], closestFood[1], Fish.foodScale);
 		}
+	}
+
+	grow(size) {
+		this.segs = this.constructSegments(this.x, this.y, this.segs[0].angle, this.segs.length+size);
 	}
 
 	seek(x, y, scale) {
