@@ -410,6 +410,8 @@ class Fish {
 		let closestDistance = 10000000;
 		let f;
 
+		const eatDistance = Math.max(6, this.length/5);
+
 		for (let i = 0; i < food.length; i++) {
 			f = food[i];
 			// Distance to food from this fish
@@ -424,7 +426,7 @@ class Fish {
 				closestFood = [dx, dy];
 
 				// Eat food if on top of it
-				if (dist < 5) {
+				if (dist < eatDistance) {
 					eatFood(i);
 					closestFood = null;
 
@@ -444,6 +446,7 @@ class Fish {
 	}
 
 	grow(size) {
+		// Only grow if this fish hasn't reached size limit
 		if (this.segs.length < Fish.maxLength) {
 			this.segs = this.constructSegments(this.x, this.y, this.segs[0].angle, this.segs.length+size);
 		}

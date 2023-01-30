@@ -44,3 +44,14 @@ svg {
 	background-color: white;
 	filter: url(#water_colour);
 }
+
+.config {
+	position: absolute;
+	color: white;
+	padding: 5px;
+	z-index: 1;
+	top: 0;
+	right: 0;
+	text-align: center;
+}
+
