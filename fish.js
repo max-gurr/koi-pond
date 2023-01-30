@@ -17,6 +17,7 @@ class Fish {
 	ctx;
 	
 	segs;
+	length;
 	x;
 	y;
 	velX;
@@ -53,12 +54,17 @@ class Fish {
 	}
 
 	constructSegments(x, y, angle, numSegs) {
+		this.length = 0;
+
 		const minLen = 4;
 		const lenIncrement = 2;
 
 		const segs = [];
-		let head = new Segment(this.ctx, x, y, minLen + lenIncrement*numSegs, angle);
+		let segLen = minLen + lenIncrement * numSegs;
+		let head = new Segment(this.ctx, x, y, segLen, angle);
+
 		segs.push(head);
+		this.length += segLen;
 
 		let tail;
 		for (let i = 0; i < numSegs-1; i++) {
@@ -67,10 +73,11 @@ class Fish {
 			// Longest at head
 			const lenFactor = numSegs - (i+1);
 
-			const segLen = minLen + lenIncrement * lenFactor;
+			segLen = minLen + lenIncrement * lenFactor;
 			tail = new Segment(ctx, head.bx, head.by, segLen, angle);	
 			
 			segs.push(tail);
+			this.length += segLen;
 
 			// Use tail of current segment as head of next segment
 			head = tail;
@@ -106,6 +113,7 @@ class Fish {
 
 		// Limit value so it doesn't increase to infinity
 		this.tick = this.tick % (Math.PI * 2);
+
 		
 		// Reset acceleration
 		this.accX = 0;
@@ -119,31 +127,30 @@ class Fish {
 
 	_wrapEdges() {
 		// Adjust position to be inside of screen
-		const offset = border * 2;
+		const boundary = this.length * 1.15;
+		const offset = this.length * 1.5;
 		let xAdjust = 0, yAdjust = 0;
-		if (this.x < -border) {
+		if (this.x < -boundary) {
 			// Fish is off left side of screen
             xAdjust += width + offset;
-        } else if (this.x > width + border) {
+        } else if (this.x > width + boundary) {
         	// Fish is off right side of screen
             xAdjust -= (width + offset);
         }
 
-        if (this.y < -border) {
+        if (this.y < -boundary) {
         	// Fish is off top of screen
             yAdjust += height + offset;
-        } else if (this.y > height + border) {
+        } else if (this.y > height + boundary) {
         	// Fish is off bottom of screen
             yAdjust -= (height + offset);
         }
 
         // Check if adjustment is needed
         if (xAdjust !== 0 || yAdjust !== 0) {
-        	const newX = this.segs[0].ax + xAdjust;
-        	const newY = this.segs[0].ay + yAdjust;
-
-        	// Reset segments based on new position, to avoid turnaround
-        	this.segs = this.constructSegments(newX, newY, this.segs[0].angle, this.segs.length);
+        	this.segs.forEach(s => {
+        		s.shift(xAdjust, yAdjust);
+        	});
 		}
 	}
 
@@ -345,7 +352,7 @@ class Fish {
         let yForce = alignment[1] * Fish.maxVel - this.velY;
 
         // Limit force magnitude
-        let force = constrainVector(xForce, yForce, 0, Fish.maxForce);
+        const force = constrainVector(xForce, yForce, 0, Fish.maxForce);
 
         // Adjust by behaviour multipler
         xForce = force[0] * Fish.alignmentScale;
@@ -367,7 +374,7 @@ class Fish {
         let xForce = cohesion[0] * Fish.maxVel - this.velX;
         let yForce = cohesion[1] * Fish.maxVel - this.velY;
 
-        let force = constrainVector(xForce, yForce, 0, Fish.maxForce);
+        const force = constrainVector(xForce, yForce, 0, Fish.maxForce);
 
         // Scale by behaviour multiplier
         xForce = force[0] * Fish.cohesionScale;
@@ -386,7 +393,7 @@ class Fish {
 		let xForce = separation[0] * Fish.maxVel - this.velX;
 		let yForce = separation[1] * Fish.maxVel - this.velY;
 
-		let force = constrainVector(xForce, yForce, 0, Fish.maxForce);
+		const force = constrainVector(xForce, yForce, 0, Fish.maxForce);
 
 		// Adjust by behaviour multiplier
 		xForce = force[0] * Fish.separationScale;
@@ -450,7 +457,7 @@ class Fish {
 		let xForce = normalised[0] * Fish.maxVel - this.velX;
 		let yForce = normalised[1] * Fish.maxVel - this.velY;
 
-		let force = constrainVector(xForce, yForce, 0, Fish.maxForce);
+		const force = constrainVector(xForce, yForce, 0, Fish.maxForce);
 
 		// Adjust by behaviour multiplier
 		xForce = force[0] * scale;
@@ -541,9 +548,7 @@ class Fish {
 		this.ctx.beginPath();
 		this.ctx.moveTo(this.x, this.y);
 
-		let point;
 		// Start drawing at top of right side of fish
-		
 		rightPoints.forEach(p => {
 			this.ctx.lineTo(p[0], p[1]);
 		})

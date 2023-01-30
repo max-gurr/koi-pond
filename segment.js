@@ -35,6 +35,14 @@ class Segment {
 		this._calcB();
 	}
 
+	shift(vx, vy) {
+		this.ax += vx;
+		this.ay += vy;
+
+		this.bx += vx;
+		this.by += vy;
+	}
+
 	driveAngle(size, theta) {
 		const adjust = size * Math.sin(theta);
 		
