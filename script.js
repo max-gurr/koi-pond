@@ -82,9 +82,10 @@ function measureFrames() {
 
 function animate() {
 	// Draw background
-	const alpha = 0.25;
-	ctx.fillStyle = `rgba(30, 65, 90, ${alpha})`;
-	ctx.fillRect(0, 0, width, height);
+	// const alpha = 1;
+	// ctx.fillStyle = `rgba(30, 65, 90, ${alpha})`;
+	// ctx.fillRect(0, 0, width, height);
+	canvas.width = width;
 
 	// Draw food
 	ctx.fillStyle = 'red';

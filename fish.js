@@ -1,7 +1,7 @@
 class Fish {
 	static maxVel = 1.5;
 	static minVel = 0.75;
-	static maxForce = 0.0015;
+	static maxForce = 0.0014;
 	static neighbourRadius = 50;
 	static neighbourAngleMax = Math.PI/2;
 	static neighbourAngleMin = 0;
@@ -11,7 +11,8 @@ class Fish {
 	static separationScale = 1.5;
 	static borderScale = 2;
 	static foodScale = 8;
-	static grow = false;
+	static grow = true;
+	static maxLength = 6;
 	
 	ctx;
 	
@@ -63,9 +64,6 @@ class Fish {
 		for (let i = 0; i < numSegs-1; i++) {
 			// Adjust length of segment based on position
 
-			// Longest at second nodule
-			// let lenFactor = numSegs + Math.abs(1 - i);
-			
 			// Longest at head
 			const lenFactor = numSegs - (i+1);
 
@@ -104,7 +102,7 @@ class Fish {
 		const accMag = vectorLength(this.accX, this.accY);
 		const scaledAccMag = accMag * 1.25;
 
-		this.tick += 0.075 + Math.min(0.14, scaledAccMag);
+		this.tick += 0.075 + Math.min(0.2, scaledAccMag);
 
 		// Limit value so it doesn't increase to infinity
 		this.tick = this.tick % (Math.PI * 2);
@@ -230,7 +228,7 @@ class Fish {
 		// Adjust wiggle size by acceleration magnitude
 		// So fish wiggles more when accelerating
 		const accMag = vectorLength(this.accX, this.accY);
-		const scaledAccMag = Math.min(0.015, accMag/2.5);
+		const scaledAccMag = Math.min(0.015, accMag/3);
 		const sizeIncrement = 0.03/this.segs.length + scaledAccMag;
 
 		// Index is an arbitrary multiplier, doesn't need to specifically reference seg/point
@@ -253,7 +251,7 @@ class Fish {
 			if (i !== j) {
 				neighbour = school[j];
 				// View from this fish to neighbour
-				const view = this.viewToNeighbour(neighbour);
+				const view = this._viewToNeighbour(neighbour);
 				const dist = view[0];
 				const angle = view[1];
 
@@ -314,7 +312,7 @@ class Fish {
 		}
 	}
 
-	viewToNeighbour(neighbour) {
+	_viewToNeighbour(neighbour) {
 		// Distance between this fish and neighbour
 		const xDist = neighbour.x - this.x;
 		const yDist = neighbour.y - this.y;
@@ -439,7 +437,9 @@ class Fish {
 	}
 
 	grow(size) {
-		this.segs = this.constructSegments(this.x, this.y, this.segs[0].angle, this.segs.length+size);
+		if (this.segs.length < Fish.maxLength) {
+			this.segs = this.constructSegments(this.x, this.y, this.segs[0].angle, this.segs.length+size);
+		}
 	}
 
 	seek(x, y, scale) {
@@ -508,6 +508,7 @@ class Fish {
 
 				const aWidthSized = aWidth + this.segs.length;
 				const bWidthSized = bWidth + this.segs.length;
+
 				if (drawHead) seg.drawFishHead(aWidth, bWidth);
 				if (drawFins) seg.drawFishFins(aWidth, bWidthSized);
 
@@ -527,7 +528,7 @@ class Fish {
 	}
 
 	_drawVector(x, y, scale = 1) {
-		this.ctx.strokeStyle = 'blue';
+		this.ctx.strokeStyle = 'red';
 		this.ctx.beginPath();
 		this.ctx.moveTo(this.x, this.y);
 		this.ctx.lineTo(this.x + x * scale, this.y + y * scale);
@@ -542,16 +543,15 @@ class Fish {
 
 		let point;
 		// Start drawing at top of right side of fish
-		for (let i = 0; i < rightPoints.length; i++) {
-			point = rightPoints[i];
-			this.ctx.lineTo(point[0], point[1]);
-		}
+		
+		rightPoints.forEach(p => {
+			this.ctx.lineTo(p[0], p[1]);
+		})
 		// Path is at tail of right side of fish,
 		// So continuing drawing from tail of left side
-		for (let i = leftPoints.length-1; i >= 0; i--) {
-			point = leftPoints[i];
-			this.ctx.lineTo(point[0], point[1]);
-		}
+		leftPoints.reverse().forEach(p => {
+			this.ctx.lineTo(p[0], p[1]);
+		})
 		// Path is at top of left side of fish
 		// this.ctx.closePath();
 

@@ -16,6 +16,10 @@ function vectorLength(x, y) {
 	return Math.sqrt(x*x + y*y);
 }
 
+function vectorAngle(x, y) {
+	return Math.atan2(y, x);
+}
+
 function _gaussianRand(sample) {
   let rand = 0;
 
