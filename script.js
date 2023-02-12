@@ -111,6 +111,9 @@ function animate() {
 	}
 
 	measureFrames();
+	console.log(Fish.alignmentScale)
+	console.log(Fish.cohesionScale)
+	console.log(Fish.separationScale)
 
 	// Cue next animation frame
 	requestAnimationFrame(this.animate.bind(this));
@@ -129,6 +132,20 @@ function eatFood(index) {
 	food.splice(index, 1);
 }
 
+function changeAlignment(newValue) {
+	val = parseInt(newValue) / 10
+	Fish.alignmentScale = val
+}
+
+function changeCohesion(newValue) {
+	val = parseInt(newValue) / 10
+	Fish.cohesionScale = val
+}
+
+function changeSeparation(newValue) {
+	val = parseInt(newValue) / 10
+	Fish.separationScale = val
+}
 
 init();
 animate();

@@ -11,14 +11,14 @@
 		<svg version="1.1" xmlns="http://www.w3.org/2000/svg" class="canvas" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
             <defs>
 			    <filter id="water_colour">
-				    <feTurbulence type="fractalNoise" baseFrequency="0.004 0.015" numOctaves="1" />
+				    <feTurbulence type="fractalNoise" baseFrequency="0.004 0.014" numOctaves="1" />
 			    	
 				    <feComposite operator="in" in2="SourceGraphic"/>
 				    <feColorMatrix type="matrix"
 				        values="0    0     0     0     0
-				                0    0.3   0.1   0.3   0
-				                0    0.7   1     0.5   0
-				                0    0.1   0.1   0.6   0.2" />
+				                0    0.3   0.1   0.2   0
+				                0    0.7   1     0.4   0
+				                0    0.1   0.1   0.6   0.1" />
 			    </filter>
 			  </defs>
 		</svg>
@@ -34,19 +34,19 @@
 				<label for="alignment">Alignment: 
 					<span id="display_alignment"></span>
 				</label>
-				<input id="alignment_value" type="range" min="0" max="20" value="3" oninput="" />
+				<input id="alignment_value" type="range" min="0" max="20" value="3" oninput="changeAlignment(this.value)" />
 			</div>
 			<div class="config__row">
 				<label for="cohesion">Cohesion: 
 					<span id="display_cohesion"></span>
 				</label>
-				<input id="cohesion_value" type="range" min="0" max="20" value="5" oninput="" />
+				<input id="cohesion_value" type="range" min="0" max="20" value="5" oninput="changeCohesion(this.value)" />
 			</div>
 			<div class="config__row">
 				<label for="separation">Separation: 
 					<span id="display_separation"></span>
 				</label>
-				<input id="separation_value" type="range" min="0" max="20" value="15" oninput="" />
+				<input id="separation_value" type="range" min="0" max="20" value="15" oninput="changeSeparation(this.value)" />
 			</div>
 		</div>
 	</body>
