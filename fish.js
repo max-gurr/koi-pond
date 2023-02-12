@@ -20,6 +20,8 @@ class Fish {
 	length;
 	x;
 	y;
+	tailX;
+	tailY;
 	velX;
 	velY;
 	accX;
@@ -123,6 +125,8 @@ class Fish {
 	_updatePosition() {
 		this.x = this.segs[0].ax;
 		this.y = this.segs[0].ay;
+		this.tailX = this.segs[this.segs.length-1].ax;
+		this.tailY = this.segs[this.segs.length-1].ay;
 	}
 
 	_wrapEdges() {
@@ -288,7 +292,7 @@ class Fish {
 
 					if (isRepelledByNeighbour) {
 						// Separation
-						// Point away from neighbour
+						// Point away from neighbour head
 						const dx = this.x - neighbour.x;
 						const dy = this.y - neighbour.y;
 						// Magnitude of separation is inverse of view distance
@@ -296,6 +300,16 @@ class Fish {
 						// Scale distance components by separation magnitude
 						separationX += separationMagnitude * dx/dist;
 						separationY += separationMagnitude * dy/dist;
+
+
+						// Point away from neighbour tail
+						const tailDx = this.x - neighbour.tailX;
+						const tailDy = this.y - neighbour.tailY;
+						const tailSeparationMagnitude = Fish.neighbourRadius - vectorLength(tailDx, tailDy);
+						// Scale distance components by separation magnitude
+						separationX += tailSeparationMagnitude * tailDx/dist;
+						separationY += tailSeparationMagnitude * tailDy/dist;
+
 					}
 				}
 			}

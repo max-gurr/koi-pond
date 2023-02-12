@@ -111,9 +111,6 @@ function animate() {
 	}
 
 	measureFrames();
-	console.log(Fish.alignmentScale)
-	console.log(Fish.cohesionScale)
-	console.log(Fish.separationScale)
 
 	// Cue next animation frame
 	requestAnimationFrame(this.animate.bind(this));
