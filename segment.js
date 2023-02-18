@@ -70,9 +70,11 @@ class Segment {
 	}
 
 	_calcB() {
+		this.ax = roundVal(this.ax, 10);
+		this.ay = roundVal(this.ay, 10);
 		// Place tail at desired length from head, at the given angle
-		this.bx = this.ax + this.len*Math.cos(this.angle);
-		this.by = this.ay + this.len*Math.sin(this.angle);
+		this.bx = roundVal(this.ax + this.len*Math.cos(this.angle), 10);
+		this.by = roundVal(this.ay + this.len*Math.sin(this.angle), 10);
 	}
 
 	transformToA() {
@@ -89,15 +91,13 @@ class Segment {
 		const points = [];
 		const offset = Math.PI/2;
 
-		points.push([
-			this.ax + aWidth * Math.cos(this.angle - offset), 
-			this.ay + aWidth * Math.sin(this.angle - offset)
-		]);
+		const lx = roundVal(this.ax + aWidth * Math.cos(this.angle - offset), 10)
+		const ly = roundVal(this.ay + aWidth * Math.sin(this.angle - offset), 10)
+		points.push([ lx, ly ]);
 
-		points.push([
-			this.ax + aWidth * Math.cos(this.angle + offset), 
-			this.ay + aWidth * Math.sin(this.angle + offset)
-		]);
+		const rx = roundVal(this.ax + aWidth * Math.cos(this.angle + offset), 10)
+		const ry = roundVal(this.ay + aWidth * Math.sin(this.angle + offset), 10)
+		points.push([ rx, ry ]);
 
 		return points;
 	}
@@ -137,8 +137,8 @@ class Segment {
 	drawFishFins(aWidth, bWidth) {
 		// Draw fish fins
 		const finSize = aWidth;
-		const finX = aWidth*0.5 + bWidth*0.5;
-		const finY = aWidth;
+		const finX = roundVal(aWidth*0.5 + bWidth*0.5, 10);
+		const finY = roundVal(aWidth, 10);
 		const finStretch = 1.25;
 
 		this.ctx.beginPath();
@@ -182,8 +182,10 @@ class Segment {
 	drawPointA(size) {
 		this.ctx.beginPath();
 
-		this.ctx.moveTo(this.ax, this.ay);
-		this.ctx.arc(this.ax, this.ay, size, 0, 2*Math.PI);
+		const x = this.ax;
+		const y = this.ay;
+		this.ctx.moveTo(x, y);
+		this.ctx.arc(x, y, size, 0, 2*Math.PI);
 
 		this.ctx.closePath();
 		this.ctx.fill();
@@ -192,8 +194,10 @@ class Segment {
 	drawPointB(size) {
 		this.ctx.beginPath();
 
-		this.ctx.moveTo(this.bx, this.by);
-		this.ctx.arc(this.bx, this.by, size, 0, 2*Math.PI);
+		const x = this.bx;
+		const y = this.by;
+		this.ctx.moveTo(x, y);
+		this.ctx.arc(x, y, size, 0, 2*Math.PI);
 
 		this.ctx.closePath();
 		this.ctx.fill();

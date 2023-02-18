@@ -35,3 +35,7 @@ function gaussianRandom(start, end) {
 	const rand = _gaussianRand(resolution);
   	return Math.floor(start + rand * (end - start + 1));
 }
+
+function roundVal(val, scale=1) {
+	return Math.round(val * scale)/scale;
+}
