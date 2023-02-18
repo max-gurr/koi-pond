@@ -6,7 +6,7 @@
 }
 
 html, canvas {
-	background-color: rgb(60, 75, 90);
+	background-color: rgb(75, 110, 180);
 }
 
 canvas {
@@ -44,6 +44,7 @@ svg {
 	z-index: 0;
 	background-color: white;
 	filter: url(#water_colour);
+	/*display: none;*/
 }
 
 .config {
