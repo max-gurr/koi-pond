@@ -30,13 +30,6 @@ canvas {
 	text-align: center;
 }
 
-svg {
-	width: 0;
-	height: 0;
-	position: absolute;
-	/*background-color: red;*/
-}
-
 #water {
 	min-width: 100%;
 	min-height: 100%;
@@ -44,7 +37,6 @@ svg {
 	z-index: 0;
 	background-color: white;
 	filter: url(#water_colour);
-	/*display: none;*/
 }
 
 .config {
@@ -75,7 +67,7 @@ svg {
 	z-index: 10;
 }
 
-.lilypad__svg {
+.lilypad > object {
 	position: absolute;
 	top: 0;
 	left: 0;
