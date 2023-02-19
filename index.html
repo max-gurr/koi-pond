@@ -14,17 +14,22 @@
 	<body>
 		<!-- Above water surface (lilypads) -->
 		<div id="surface">
-			<div class="lilypad lilypad__about">
-				<lily-pad notchSize="0.6" rotate="145" rotateBy="10">
-					<h1>ABOUT</h1>
-				</lily-pad>
-			</div>
+			<lily-pad 
+				notchSize="0.6" rotate="145" rotateBy="10"
+				x="left: 5vw" y="top: 10vh" size="175px"
+			>
+				<h1>ABOUT</h1>
+			</lily-pad>
 
-			<div class="lilypad lilypad__projects">
-				<lily-pad notchSize="0.35" rotate="-30" rotateBy="20">
-					<h1>PROJECTS</h1>
-				</lily-pad>
-			</div>
+			<lily-pad 
+				notchSize="0.35" rotate="-30" rotateBy="20"	
+				x="right: 5vw" y="bottom: 10vh" size="200px"
+			>
+				<h1>PROJECTS</h1>
+			</lily-pad>
+
+			<lily-pad x="left: 25vw" y="bottom: 5vh"></lily-pad>
+			<lily-pad x="right: 25vw" y="top: 10vh"></lily-pad>
 
 			<!-- Water surface effect -->
 			<svg version="1.1" xmlns="http://www.w3.org/2000/svg"

@@ -10,7 +10,7 @@ class LilyPad extends HTMLElement {
 	}
 
 	static get observedAttributes() {
-		return ['notchSize', 'rotate', 'rotateBy'];
+		return ['notchSize', 'rotate', 'rotateBy', 'x', 'y', 'size'];
 	}
 
 	attributeChangedCallback(property, oldValue, newValue) {
@@ -23,15 +23,21 @@ class LilyPad extends HTMLElement {
 		const notchSize = parseFloat(this.getAttribute('notchSize')) || 0;
 		const rotate = parseInt(this.getAttribute('rotate')) || 0;
 		const rotateBy = parseInt(this.getAttribute('rotateBy')) || 0;
+		const x = this.getAttribute('x') || 0;
+		const y = this.getAttribute('y') || 0;
+		const size = this.getAttribute('size') || '75px';
 		
 		this.shadowRoot.innerHTML = `
 			<style>
 				:host {
 					display: flex;
-					width: 100%;
-					height: 100%;
 					justify-content: center;
 					align-items: center;
+					width: ${size};
+					height: ${size};
+					position: absolute;
+					${x};
+					${y};
 				}
 				svg {
 					position: absolute;
@@ -47,6 +53,7 @@ class LilyPad extends HTMLElement {
 					position: relative;
 					z-index: 2;
 					pointer-events: none;
+					color: rgb(220, 240, 250);
 				}
 			</style>
 			

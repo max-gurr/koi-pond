@@ -59,31 +59,3 @@ canvas {
 	background-color: white;
 	filter: url(#water_colour);
 }
-
-.lilypad {
-	width: 200px;
-	height: 200px;
-	position: absolute;
-	color: rgb(220, 240, 250);
-}
-
-.lilypad__about {
-	top: 10vh;
-	left: 5vw;
-	
-	width: 175px;
-	height: 175px;
-}
-
-/* .lilypad__about:hover > lily-pad {
-	transform: rotate(10deg);
-} */
-
-.lilypad__projects {
-	bottom: 10vh;
-	right: 5vw;
-}
-
-/* .lilypad__projects:hover > lily-pad {
-	transform: rotate(-10deg);
-} */
