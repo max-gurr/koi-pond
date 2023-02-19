@@ -25,7 +25,7 @@ class LilyPad extends HTMLElement {
 		const rotateBy = parseInt(this.getAttribute('rotateBy')) || 0;
 		const x = this.getAttribute('x') || '';
 		const y = this.getAttribute('y') || '';
-		const size = this.getAttribute('size') || '75px';
+		const size = this.getAttribute('size') || '';
 		
 		this.shadowRoot.innerHTML = `
 			<style>
@@ -53,7 +53,6 @@ class LilyPad extends HTMLElement {
 					position: relative;
 					z-index: 2;
 					pointer-events: none;
-					color: rgb(220, 240, 250);
 				}
 			</style>
 			
