@@ -60,17 +60,18 @@ canvas {
 }
 
 .lilypad {
-	display: block;
 	width: 200px;
 	height: 200px;
-	position: relative;
-	z-index: 10;
-}
-
-.lilypad > object {
 	position: absolute;
 	top: 0;
 	left: 0;
-	width: 100%;
-	height: 100%;
+	z-index: 0;
+}
+
+.lilypad__bg {
+	transition: transform 0.5s ease;
+}
+
+.lilypad__bg:hover {
+	transform: rotate(10deg);
 }

@@ -20,11 +20,17 @@ class LilyPad extends HTMLElement {
 		const notchSize = parseFloat(this.getAttribute('notchSize')) || 0;
 
 		this.style = `
-			transform: rotate(${this.getAttribute('rotate')}deg);
+			display: block;
+			position: absolute;
+			top: 0;
+			left: 0;
+			z-index: -1;
+			width: 100%;
+			height: 100%;
 		`
 
 		this.innerHTML = `
-			<svg id="lilypad" version="1.1" xmlns="http://www.w3.org/2000/svg"
+			<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
 				viewBox="0 0 100 100">
 		 		<defs>
 					<mask id="cutout">
@@ -46,11 +52,13 @@ class LilyPad extends HTMLElement {
 					</radialGradient>
 				</defs>
  
-				<g mask="url(#cutout)">
+				<g mask="url(#cutout)" 
+					transform="rotate(${this.getAttribute('rotate')}, 50, 50)"
+				>
 					<circle 
 						cx="50" 
 						cy="50" 
-						r="40" 
+						r="48" 
 						fill="url(#lilypad_gradient)" 
 						stroke="rgb(9, 141, 35)"
 					/>
