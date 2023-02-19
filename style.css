@@ -30,15 +30,6 @@ canvas {
 	text-align: center;
 }
 
-#water {
-	min-width: 100%;
-	min-height: 100%;
-	position: absolute;
-	z-index: 0;
-	background-color: white;
-	filter: url(#water_colour);
-}
-
 .config {
 	position: absolute;
 	color: white;
@@ -52,26 +43,47 @@ canvas {
 
 #surface {
 	position: absolute;
-	z-index: 1;
+	z-index: 10;
 	top: 0;
 	left: 0;
 	width: 100%;
 	height: 100%;
 }
 
+#water {
+	min-width: 100%;
+	min-height: 100%;
+	position: absolute;
+	z-index: -1;
+	background-color: white;
+	filter: url(#water_colour);
+}
+
 .lilypad {
 	width: 200px;
 	height: 200px;
 	position: absolute;
-	top: 0;
-	left: 0;
 	z-index: 0;
+	color: rgb(220, 240, 250);
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
-.lilypad__bg {
-	transition: transform 0.5s ease;
-}
-
-.lilypad__bg:hover {
+.lilypad:hover > lily-pad {
 	transform: rotate(10deg);
+}
+
+.lilypad > h1 {
+	pointer-events: none;
+}
+
+.lilypad__about {
+	top: 10vh;
+	left: 5vw;
+}
+
+.lilypad__projects {
+	bottom: 10vh;
+	right: 5vw;
 }

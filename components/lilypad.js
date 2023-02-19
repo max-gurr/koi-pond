@@ -13,11 +13,13 @@ class LilyPad extends HTMLElement {
 
 	attributeChangedCallback(property, oldValue, newValue) {
 		if (oldValue === newValue) return;
+
 		this.render();
 	}
 
 	render() {
 		const notchSize = parseFloat(this.getAttribute('notchSize')) || 0;
+		const rotate = this.getAttribute('rotate') || 0;
 
 		this.style = `
 			display: block;
@@ -27,6 +29,7 @@ class LilyPad extends HTMLElement {
 			z-index: -1;
 			width: 100%;
 			height: 100%;
+			transition: transform 0.5s ease;
 		`
 
 		this.innerHTML = `
@@ -52,9 +55,7 @@ class LilyPad extends HTMLElement {
 					</radialGradient>
 				</defs>
  
-				<g mask="url(#cutout)" 
-					transform="rotate(${this.getAttribute('rotate')}, 50, 50)"
-				>
+				<g mask="url(#cutout)" transform="rotate(${rotate}, 50, 50)">
 					<circle 
 						cx="50" 
 						cy="50" 
