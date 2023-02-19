@@ -23,8 +23,8 @@ class LilyPad extends HTMLElement {
 		const notchSize = parseFloat(this.getAttribute('notchSize')) || 0;
 		const rotate = parseInt(this.getAttribute('rotate')) || 0;
 		const rotateBy = parseInt(this.getAttribute('rotateBy')) || 0;
-		const x = this.getAttribute('x') || 0;
-		const y = this.getAttribute('y') || 0;
+		const x = this.getAttribute('x') || '';
+		const y = this.getAttribute('y') || '';
 		const size = this.getAttribute('size') || '75px';
 		
 		this.shadowRoot.innerHTML = `
