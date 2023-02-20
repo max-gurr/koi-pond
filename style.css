@@ -6,7 +6,7 @@
 }
 
 html, canvas {
-	background-color: rgb(17, 167, 201);
+	background-color: rgb(34, 179, 219);
 }
 
 canvas {
@@ -60,6 +60,7 @@ canvas {
 	z-index: -1;
 	background-color: white;
 	filter: url(#water_colour);
+	/* display: none; */
 }
 
 #surface::before {
@@ -70,7 +71,8 @@ canvas {
 	left: 0;
 	height: 100%;
 	width: 100%;
-	/* backdrop-filter: brightness(90%); */
+	backdrop-filter: brightness(90%);
+	pointer-events: none;
 }
 
 lily-pad {
