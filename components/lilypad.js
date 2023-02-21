@@ -67,9 +67,9 @@ class LilyPad extends HTMLElement {
 						<rect x="0" y="0" width="100" height="100" fill="white"/>
 						${notchSize > 0 ? 
 							`<path 
-									d="M ${50 - notchSize*10} 0
-										 L 50 ${50 * notchSize}
-										 L ${50 + notchSize*10} 0
+									d="M ${50 - notchSize*15} 0
+										 A 50 85 0 0 1 50 ${50 * notchSize}
+										 A 50 85 0 0 1 ${50 + notchSize*15} 0
 										 Z" 
 									fill="black"
 							/>` : ''
@@ -91,14 +91,14 @@ class LilyPad extends HTMLElement {
 						stroke="rgb(0, 175, 15)"
 					/>
  
-					<path d="	M 65 5 
-										C 50 50 50 50 87 32 
-										C 50 50 50 50 87 70
-										C 50 50 50 50 55 95 
+					<path d="	M 75 15 
+										C 50 50 50 50 92 42 
+										C 50 50 50 50 84 78
+										C 50 50 50 50 53 92 
 										C 50 50 50 50 15 80 
-										C 50 50 50 50 8 40
-										C 50 50 50 50 28 15
-										C 50 50 50 50 65 5
+										C 50 50 50 50 8 50
+										C 50 50 50 50 20 18
+										C 50 50 50 50 75 15
 										"
 						stroke="none"
 						fill="rgb(0, 178, 60)"
