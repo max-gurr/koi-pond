@@ -2,11 +2,11 @@
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
-	overflow: hidden;
 }
 
 html, canvas {
 	background-color: rgb(34, 179, 219);
+	overflow: hidden;
 }
 
 canvas {

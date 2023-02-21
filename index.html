@@ -7,6 +7,7 @@
 		<script src="fish.js" defer></script>
 		<script src="script.js" defer></script>
 		<script src="components/lilypad.js" type="module"></script>
+		<script src="components/lilyflower.js" type="module"></script>
 
 		<!-- Styles -->
 		<link href="style.css" type="text/css" rel="stylesheet"/>
@@ -30,7 +31,9 @@
 				<h1>PROJECTS</h1>
 			</lily-pad>
 
-			<lily-pad x="left: 10vw" y="bottom: 10vh" size="15vw"></lily-pad>
+			<lily-pad x="left: 10vw" y="bottom: 10vh" size="15vw">
+				<lily-flower slot="flower" size="65%" x="left: 35%" y="top: 35%"/>
+			</lily-pad>
 			<lily-pad x="right: 5vw" y="top: 10vh"></lily-pad>
 
 			<!-- Water surface effect -->
