@@ -56,17 +56,17 @@ class LilyFlower extends HTMLElement {
 				viewBox="0 0 100 100">
 				<defs>
 					<radialGradient id="petal_fill_white">
-						<stop offset="15%" stop-color="rgb(210, 200, 220)" />
+						<stop offset="15%" stop-color="rgb(210, 220, 220)" />
 						<stop offset="100%" stop-color="rgb(230, 230, 230)" />
 					</radialGradient>
 
 					<radialGradient id="petal_fill_pink">
-						<stop offset="15%" stop-color="rgb(218, 186, 198)" />
-						<stop offset="100%" stop-color="rgb(255, 206, 255)" />
+						<stop offset="15%" stop-color="rgb(218, 196, 198)" />
+						<stop offset="100%" stop-color="rgb(235, 206, 225)" />
 					</radialGradient>
 
 					<radialGradient id="petal_fill_pliurple">
-						<stop offset="15%" stop-color="rgb(228, 126, 198)" />
+						<stop offset="15%" stop-color="rgb(228, 156, 198)" />
 						<stop offset="100%" stop-color="rgb(225, 186, 205)" />
 					</radialGradient>
 
@@ -78,8 +78,8 @@ class LilyFlower extends HTMLElement {
 
 				${LilyFlower.generatePetals(50, 40, "url(#petal_fill_white)", 360/7)}
 				${LilyFlower.generatePetals(43, 40, "url(#petal_fill_pink)", 360/7, 360/14)}
-				${LilyFlower.generatePetals(33, 30, "url(#petal_fill_pliurple)", 360/9)}
-				${LilyFlower.generatePetals(24, 20, "url(#petal_fill_purple)", 360/11)}
+				${LilyFlower.generatePetals(33, 30, "url(#petal_fill_pliurple)", 360/9, 360/12)}
+				${LilyFlower.generatePetals(24, 20, "url(#petal_fill_purple)", 360/11, 360/22)}
 				${LilyFlower.generatePetals(0, 9, "rgb(215, 255, 39)", 360/13)}
 
 			</svg>

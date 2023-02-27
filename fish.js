@@ -7,7 +7,7 @@ class Fish {
 	static neighbourAngleMin = 0;
 	static separationRadius = Fish.neighbourRadius/1.5;
 	static alignmentScale = 0.5;
-	static cohesionScale = 0.8;
+	static cohesionScale = 0.7;
 	static separationScale = 1.5;
 	static borderScale = 2;
 	static foodScale = 8;
