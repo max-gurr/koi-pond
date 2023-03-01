@@ -19,6 +19,12 @@ class LilyPad extends HTMLElement {
 		this.render();
 	}
 
+	async hide(time) {
+		window.setTimeout(() => {
+			this.shadowRoot.host.style.transform = 'scale(0)';
+		}, time);
+	}
+
 	render() {
 		const notchSize = parseFloat(this.getAttribute('notchSize')) || 0;
 		const rotate = parseInt(this.getAttribute('rotate')) || 0;
@@ -35,6 +41,7 @@ class LilyPad extends HTMLElement {
 					position: absolute;
 					${x};
 					${y};
+					transition: transform 0.25s ease;
 				}
 				.pad {
 					position: absolute;
@@ -45,9 +52,15 @@ class LilyPad extends HTMLElement {
 					display: block;
 					transform: rotate(${rotate}deg);
 					transition: transform 0.25s ease;
+					background: none;
+					border: none;
+					outline: none;
+					padding: 0px;
 				}
-				:host(:hover) .pad {
+				:host(:hover) .pad,
+				:host(:focus) .pad {
 					transform: rotate(${rotate+rotateBy}deg);
+					cursor: pointer;
 				}
 				.content {
 					display: flex;
@@ -65,7 +78,7 @@ class LilyPad extends HTMLElement {
 				<slot></slot>
 			</div>
 			
-			<div class="pad">
+			<button class="pad" id="pad">
 				<slot name="flower"></slot>
 				<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
 					viewBox="0 0 100 100">
@@ -98,7 +111,7 @@ class LilyPad extends HTMLElement {
 						<circle 
 							cx="50" 
 							cy="50" 
-							r="48" 
+							r="49" 
 							fill="url(#lilypad_bg)" 
 							stroke="rgb(20, 230, 60)"
 						/>
@@ -117,7 +130,7 @@ class LilyPad extends HTMLElement {
 						/>
 					</g>
 				</svg>
-			</div>
+			</button>
 		`;
 	}
 }
