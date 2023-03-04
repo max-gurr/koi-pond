@@ -59,13 +59,21 @@ canvas {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	display: flex;
+	display: none;
 }
 
 /* Home styles */
 
 #home {
-	display: block;
+}
+
+#home .click-area {
+	position: absolute;
+	top: 0;
+	left: 0;
+	min-width: 100%;
+	min-height: 100%;
+	z-index: -1;
 }
 
 lily-pad {
@@ -150,5 +158,4 @@ lily-pad {
 
 /* About page styles */
 #about {
-	display: none;
 }

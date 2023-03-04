@@ -9,7 +9,8 @@
 		<script src="components/lilypad.js" type="module"></script>
 		<script src="components/lilyflower.js" type="module"></script>
 
-		<script src="script.js" defer></script>
+		<script src="canvasController.js" defer></script>
+		<script src="router.js" defer></script>
 
 		<!-- Styles -->
 		<link href="style.css" type="text/css" rel="stylesheet"/>
@@ -17,13 +18,17 @@
 	<body>
 		<!-- Home page (lilypads) -->
 		<div id="home" class="page">
+			<div class="click-area"
+				onmousedown="placeFood(event)"
+			></div>
+			
 			<section id="name-container">
 				<p class="text">Max Gurr</p>
 			</section>
 			
 			<lily-pad class="lilypad__about"
 				notchSize="0.7" rotate="145" rotateBy="10"
-				onclick="hideLilyPads()"
+				onclick="goToPageFrom('about', 'home')"
 			>
 				<h1>ABOUT</h1>
 			</lily-pad>
@@ -41,7 +46,10 @@
 				y="bottom: 10vh" 
 				size="15vw"
 			>
-				<lily-flower slot="flower" size="65%" x="left: 35%" y="top: 35%"/>
+				<lily-flower slot="flower" 
+				size="75%" 
+				x="left: 40%" 
+				y="top: 40%"/>
 			</lily-pad>
 
 			<lily-pad
@@ -54,6 +62,37 @@
 		<!-- About page -->
 		<div id="about" class="page">
 			<h1>About Me</h1>
+
+			<lily-pad class="lilypad__back"
+				size="min(140px, 15vw)"
+				x="right: 2vw"
+				y="bottom: 2vw"
+				notchSize="0.45"
+				rotate="60"
+				rotateBy="90"
+				onclick="goToPageFrom('home', 'about')"
+			>
+				<h1>Back</h1>
+			</lily-pad>
+
+			<lily-pad
+				x="right: min(100px, 10vw)"
+				y="bottom: min(160px, 15.5vw)"
+				size="min(100px, 11vw)"
+			>
+				<lily-flower slot="flower" 
+					size="85%" 
+					x="left: 50%" 
+					y="top: 50%"
+				/>
+			</lily-pad>
+
+			<lily-pad
+				x="right: min(25px, 2vw)"
+				y="bottom: min(165px, 16.5vw)"
+				size="min(75px, 8vw)"
+			>
+			</lily-pad>
 		</div>
 
 		<!-- Water surface effect -->
@@ -74,7 +113,7 @@
 				</filter>
 			</defs>
 		</svg>
-		<div id="water" onmousedown="placeFood(event)"></div>
+		<div id="water"></div>
 
 		<!-- Fish -->
 		<canvas id="canvas"></canvas>

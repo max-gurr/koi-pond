@@ -119,31 +119,6 @@ function animate() {
 	requestAnimationFrame(this.animate.bind(this));
 }
 
-function hideLilyPads() {
-	// Get all lilypads on homescreen surface
-	const homePage = document.getElementById('home');
-	const pads = homePage.getElementsByTagName("lily-pad");
-
-	// Shuffle elements
-	const shuffledPads = Array.from(pads).sort(() => {
-		return Math.random() - 0.5;
-	})
-
-	// Hide elements with delay
-	let i;
-	for (i = 0; i < shuffledPads.length; i++) {
-		const delay = i * 150;
-		shuffledPads[i].hide(delay);
-	}
-
-	const aboutPage = document.getElementById('about')
-	const changePageDelay = (shuffledPads.length + 1) * 150;
-
-	window.setTimeout(() => {
-		homePage.style.display = 'none';
-		aboutPage.style.display = 'block';
-	}, changePageDelay);
-}
 
 function adjustNumFish(newValue) {
 	numFish = newValue;
@@ -175,7 +150,6 @@ function changeSeparation(newValue) {
 
 init();
 animate();
-
 
 window.addEventListener("resize", init);
 

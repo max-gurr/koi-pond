@@ -1,5 +1,5 @@
 class Fish {
-	static maxVel = 1.5;
+	static maxVel = 1.25;
 	static minVel = 0.75;
 	static maxForce = 0.0014;
 	static neighbourRadius = 50;

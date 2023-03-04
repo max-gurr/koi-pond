@@ -25,6 +25,13 @@ class LilyPad extends HTMLElement {
 		}, time);
 	}
 
+	async show(time) {
+		this.shadowRoot.host.style.visibility = 'visible';
+		window.setTimeout(() => {
+			this.shadowRoot.host.style.transform = 'scale(1)';
+		}, time)
+	}
+
 	render() {
 		const notchSize = parseFloat(this.getAttribute('notchSize')) || 0;
 		const rotate = parseInt(this.getAttribute('rotate')) || 0;
@@ -41,6 +48,8 @@ class LilyPad extends HTMLElement {
 					position: absolute;
 					${x};
 					${y};
+					visibility: hidden;
+					transform: scale(0);
 					transition: transform 0.25s ease;
 				}
 				.pad {
