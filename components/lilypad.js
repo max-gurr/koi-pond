@@ -46,6 +46,7 @@ class LilyPad extends HTMLElement {
 					width: ${size};
 					height: ${size};
 					position: absolute;
+					z-index: 10;
 					${x};
 					${y};
 					visibility: hidden;
@@ -80,6 +81,12 @@ class LilyPad extends HTMLElement {
 					position: relative;
 					z-index: 2;
 					pointer-events: none;
+				}
+				::slotted(h1) {
+					font-size: max(min(2em, 2vw), 1.5em);
+				}
+				::slotted(p) {
+					font-size: min(1.75em, 2.75vw);
 				}
 			</style>
 			

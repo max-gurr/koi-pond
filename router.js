@@ -52,6 +52,8 @@ function goToPageFrom(destination, origin) {
 	
 	const totalDelay = hideLilyPads(originPage);
 
+	// Hide origin page
+	// Show destination page
 	window.setTimeout(() => {
 		originPage.style.display = 'none';
 		destinationPage.style.display = 'block';
@@ -60,6 +62,43 @@ function goToPageFrom(destination, origin) {
 	showLilyPadsWithDelay(destinationPage, totalDelay+200);
 }
 
-const startPage = 'home';
+// Keep track of scroll position
+let scrolling = false;
+let scrollOffset = 0;
+function ScrollAboutPage(contentElement, event) {
+	// Only scroll more if a scroll isn't already happening
+	if (!scrolling) {
+		scrolling = true;
+
+		const clientRect = contentElement.getBoundingClientRect();
+		// clientRect.right + right.width = offset from right of screen
+		// clientRect.left = offset from left of screen
+
+		// Scrolling down
+		if (event.deltaY > 0 && (clientRect.right + clientRect.width) >= 0) {
+			scrollOffset -= 100;
+		} 
+		// Scrolling up
+		else if (event.deltaY < 0 && clientRect.left < 0) {
+			scrollOffset += 100;
+		} 
+		// Don't scroll
+		else {
+			scrolling = false;
+			return;
+		}
+
+		// Set scroll on content
+		contentElement.style.left = `${scrollOffset}%`;
+
+		// When scroll is finished, enable further scrolling
+		contentElement.addEventListener('transitionend', () => {
+			scrolling = false;
+		})
+	}
+}
+
+// Load homepage
+const startPage = 'about';
 document.getElementById(startPage).style.display = 'block';
-showLilyPadsWithDelay(document.getElementById(startPage), 500);
+showLilyPadsWithDelay(document.getElementById(startPage), 1000);

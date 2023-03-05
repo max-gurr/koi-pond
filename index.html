@@ -61,10 +61,26 @@
 
 		<!-- About page -->
 		<div id="about" class="page">
-			<h1>About Me</h1>
+
+			<div class="content" id="about__content"
+				onmousewheel="ScrollAboutPage(this, event)" 
+			>
+				<section class="content__section">
+					<h1>About Me</h1>
+				</section>
+				<section class="content__section">
+					<h1>Work Experience</h1>
+				</section>
+				<section class="content__section">
+					<h1>Education</h1>
+				</section>
+				<section class="content__section">
+					<h1>Contact</h1>
+				</section>
+			</div>
 
 			<lily-pad class="lilypad__back"
-				size="min(140px, 15vw)"
+				size="min(100px, 12vw)"
 				x="right: 2vw"
 				y="bottom: 2vw"
 				notchSize="0.45"
@@ -72,13 +88,12 @@
 				rotateBy="90"
 				onclick="goToPageFrom('home', 'about')"
 			>
-				<h1>Back</h1>
+				<p>Back</p>
 			</lily-pad>
-
 			<lily-pad
-				x="right: min(100px, 10vw)"
-				y="bottom: min(160px, 15.5vw)"
-				size="min(100px, 11vw)"
+				x="right: min(70px, 7.5vw)"
+				y="bottom: min(128px, 13.5vw)"
+				size="min(75px, 8vw)"
 			>
 				<lily-flower slot="flower" 
 					size="85%" 
@@ -86,13 +101,11 @@
 					y="top: 50%"
 				/>
 			</lily-pad>
-
 			<lily-pad
-				x="right: min(25px, 2vw)"
-				y="bottom: min(165px, 16.5vw)"
-				size="min(75px, 8vw)"
-			>
-			</lily-pad>
+				x="right: min(20px, 1.5vw)"
+				y="bottom: min(125px, 13.5vw)"
+				size="min(50px, 6vw)"
+			></lily-pad>
 		</div>
 
 		<!-- Water surface effect -->
