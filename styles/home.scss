@@ -1,0 +1,89 @@
+/* Home styles */
+
+#home {
+ .click-area {
+		position: absolute;
+		top: 0;
+		left: 0;
+		min-width: 100%;
+		min-height: 100%;
+		z-index: -1;
+	}
+}
+
+
+.lilypad{
+	&__about {
+		top: 10vh;
+		left: 5vw;
+		
+		width: 175px;
+		height: 175px;
+	}
+
+	&__projects {
+		bottom: 10vh;
+		right: 5vw;
+		
+		width: 200px;
+		height: 200px;
+	}
+
+	&__hide {
+		width: 0px;
+		height: 0px;
+	}
+}
+
+
+#name-container {
+	position: absolute;
+	z-index: 100;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	padding: 2.5vh 4vw;
+	color: white;
+	transition: background-color 0.25s ease;
+
+	&::before, &::after {
+		content: "";
+		position: absolute;
+		height: 40%;
+		width: 20%;
+		transition: all 0.25s ease;
+		border-radius: 5px;
+	}
+
+	&::before {
+		top: 0;
+		right: 0;
+		border-top: solid 3px white;
+		border-right: solid 3px white;
+		clip-path: polygon(0% 0%, 100% 100%, 100% 0);
+	}
+
+	&::after {
+		bottom: 0;
+		left: 0;
+		border-bottom: solid 3px white;
+		border-left: solid 3px white;
+		clip-path: polygon(100% 100%, 0% 100%, 0% 0%);
+	}
+
+	&:hover {
+		background-color: rgba(255, 255, 255, 0.3);
+		transition: background-color 0.25s ease 0.25s;
+
+		&::before, 
+		&::after {
+			width: 100%;
+			height: 100%;
+			clip-path: none;
+		}
+	}
+	.text {
+		font-size: 2em;
+		font-weight: 500;
+	}
+}

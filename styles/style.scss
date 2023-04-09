@@ -1,0 +1,64 @@
+*, *::before, *::after {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+html, canvas {
+	background-color: rgb(34, 179, 219);
+	overflow: hidden;
+}
+
+canvas {
+	position: absolute;
+	z-index: -100;
+	top: 0;
+	left: 0;
+	max-width: 100%;
+	max-height: 100%;
+	filter: blur(1.5px);
+}
+
+.controls {
+	position: absolute;
+	color: white;
+	padding: 5px;
+	z-index: 1;
+	bottom: 0;
+	left: 50%;
+	transform: translate(-50%, 0);
+	text-align: center;
+	display: none;
+}
+
+.config {
+	position: absolute;
+	color: white;
+	padding: 5px;
+	z-index: 1;
+	top: 0;
+	right: 0;
+	text-align: center;
+	display: none;
+}
+
+#water {
+	min-width: 100%;
+	min-height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1;
+	filter: url(#water_colour);
+}
+
+.page {
+	position: absolute;
+	z-index: 10;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	display: none;
+	color: rgb(221, 255, 241);
+}
