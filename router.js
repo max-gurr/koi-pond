@@ -46,11 +46,20 @@ function hideLilyPads(parentEl) {
 	return (i+1) * delayPerPad;
 }
 
-function goToPageFrom(destination, origin) {
-	const originPage = document.getElementById(origin);
+function goToPage(destination) {
 	const destinationPage = document.getElementById(destination);
 	
-	const totalDelay = hideLilyPads(originPage);
+	let originPage;
+	let totalDelay = 0;
+	// Get current page
+	document.querySelectorAll(".page").forEach(page => {
+		if (page.style.display != "" && page.style.display != "none") {
+			// Hide lilypads on current page
+			totalDelay = hideLilyPads(page);
+
+			originPage = page;
+		}
+	})
 
 	// Hide origin page
 	// Show destination page
