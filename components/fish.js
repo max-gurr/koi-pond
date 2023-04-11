@@ -521,8 +521,8 @@ class Fish {
 			
 			// Drawing fish bodyparts
 			const drawHead = i==0,
-				  drawFins = i==0,
-				  drawTail = i==numSegs-1;
+				  	drawFins = i==0,
+				  	drawTail = i==numSegs-1;
 
 			if (drawHead || drawFins || drawTail) {
 				this.ctx.save();
