@@ -8,6 +8,7 @@
 		<script src="components/fish.js" defer></script>
 		<script src="components/lilypad.js" type="module"></script>
 		<script src="components/lilyflower.js" type="module"></script>
+		<script src="components/jobTile.js" type="module"></script>
 
 		<script src="canvasController.js" defer></script>
 		<script src="router.js" defer></script>
@@ -72,17 +73,16 @@
 				</section>
 				<section>
 					<h1>Work Experience</h1>
-					<div class="job">
-						<h2 class="company">Univerity of Auckland</h2>
-						<h3 class="role">Graduate Teaching Assistant</h3>
-						<div class="dates">
-							<h4 class="from">July 2022</h4>
-							<h4 class="until">Current</h4>
-						</div>
+					<job-tile
+						company="University of Auckland"
+						role="Graduate Teaching Assistant"
+						from="July 2022"
+						until="Current"
+					>
 						<p>GTA for COMPSCI 335, COMPSCI 331, COMPSCI 345, SOFTENG 310, SOFTENG 350, PSYCH 200.
 							Responsibilities involve assisting students with understanding course-content, advising and overseeing student projects, and facilitating group discussions.
 						</p>
-					</div>
+					</job-tile>
 				</section>
 				<section>
 					<h1>Education</h1>

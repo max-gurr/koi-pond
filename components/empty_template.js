@@ -25,7 +25,13 @@ class EmptyTemplate extends HTMLElement {
 				:host{
 				}
 			</style>
+			:slotted{
+				
+			}
 			<div>Empty content: ${val}</div>
+			<div>
+				<slot></slot>
+			</div>
 		`;
 	}
 }
