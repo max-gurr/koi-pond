@@ -250,14 +250,14 @@ class Fish {
 
 	flock(school, i) {
 		let neighbourCount = 0;
-	    let cohesionX = 0;
-	    let cohesionY = 0;
-	    let alignmentX = 0;
-	    let alignmentY = 0;
-	    let separationX = 0;
-	    let separationY = 0;
+		let cohesionX = 0;
+		let cohesionY = 0;
+		let alignmentX = 0;
+		let alignmentY = 0;
+		let separationX = 0;
+		let separationY = 0;
 
-	    let neighbour;
+		let neighbour;
 		for (let j = 0; j < numFish; j++) {
 			if (i !== j) {
 				neighbour = school[j];

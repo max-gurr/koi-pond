@@ -91,13 +91,15 @@ class Segment {
 		const points = [];
 		const offset = Math.PI/2;
 
-		const lx = roundVal(this.ax + aWidth * Math.cos(this.angle - offset), 10)
-		const ly = roundVal(this.ay + aWidth * Math.sin(this.angle - offset), 10)
-		points.push([ lx, ly ]);
+		points.push([ 
+			Math.round(this.ax + aWidth * Math.cos(this.angle - offset)), 
+			Math.round(this.ay + aWidth * Math.sin(this.angle - offset))
+		]);
 
-		const rx = roundVal(this.ax + aWidth * Math.cos(this.angle + offset), 10)
-		const ry = roundVal(this.ay + aWidth * Math.sin(this.angle + offset), 10)
-		points.push([ rx, ry ]);
+		points.push([ 
+			Math.round(this.ax + aWidth * Math.cos(this.angle + offset)), 
+			Math.round(this.ay + aWidth * Math.sin(this.angle + offset))
+		]);
 
 		return points;
 	}
@@ -107,13 +109,13 @@ class Segment {
 		const offset = Math.PI/2;
 
 		points.push([
-			this.bx + bWidth * Math.cos(this.angle -offset), 
-			this.by + bWidth * Math.sin(this.angle - offset)
+			Math.round(this.bx + bWidth * Math.cos(this.angle -offset)), 
+			Math.round(this.by + bWidth * Math.sin(this.angle - offset))
 		]);
 
 		points.push([
-			this.bx + bWidth * Math.cos(this.angle + offset), 
-			this.by + bWidth * Math.sin(this.angle + offset)
+			Math.round(this.bx + bWidth * Math.cos(this.angle + offset)), 
+			Math.round(this.by + bWidth * Math.sin(this.angle + offset))
 		]);
 
 		return points;
@@ -121,9 +123,9 @@ class Segment {
 
 	drawFishHead(aWidth, bWidth) {
 		// Draw half-circle for head of fish
-		const curveHeight = aWidth*2.5;
-		const curveX = aWidth+1;
-		const curveWidth = 0.5*curveX;
+		const curveHeight = Math.round(aWidth*2.5);
+		const curveX = 			Math.round(aWidth+1);
+		const curveWidth = 	Math.round(0.5*curveX);
 
 		this.ctx.beginPath();
 
@@ -136,10 +138,10 @@ class Segment {
 
 	drawFishFins(aWidth, bWidth) {
 		// Draw fish fins
-		const finSize = aWidth;
-		const finX = roundVal(aWidth*0.5 + bWidth*0.5, 10);
-		const finY = roundVal(aWidth, 10);
-		const finStretch = 1.25;
+		const finSize = 		roundVal(aWidth, 10);
+		const finX = 				Math.round(aWidth*0.5 + bWidth*0.5);
+		const finY = 				Math.round(aWidth);
+		const finStretch = 	1.5;
 
 		this.ctx.beginPath();
 
@@ -158,10 +160,10 @@ class Segment {
 	}
 
 	drawFishTail(aWidth, bWidth) {
-		const tailX = 0;
-		const tailY = -bWidth/3;
-		const tailSize = 5 + bWidth/1.5;
-		const tailStretch = 0.25 + aWidth/5;
+		const tailX = 				0;
+		const tailY = 				Math.round(-bWidth/3);
+		const tailSize = 			Math.round(5 + bWidth);
+		const tailStretch = 	roundVal(0.25 + aWidth/5, 10);
 
 		this.ctx.beginPath();
 
