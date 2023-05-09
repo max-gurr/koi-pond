@@ -9,6 +9,17 @@ html, canvas {
 	overflow: hidden;
 }
 
+// body::before {
+// 	position: absolute;
+// 	z-index: 10;
+// 	content: "";
+// 	top: 0;
+// 	left: 0;
+// 	min-height: 100%;
+// 	min-width: 100%;
+// 	background-color: red;
+// }
+
 canvas {
 	position: absolute;
 	z-index: -100;
@@ -16,7 +27,7 @@ canvas {
 	left: 0;
 	max-width: 100%;
 	max-height: 100%;
-	filter: blur(1.5px);
+	filter: blur(2px);
 }
 
 .controls {
