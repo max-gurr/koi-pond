@@ -9,7 +9,7 @@ class Fish {
 	static alignmentScale = 0.5;
 	static cohesionScale = 0.7;
 	static separationScale = 1.5;
-	static borderScale = 2;
+	static borderScale = 4;
 	static foodScale = 8;
 	static grow = true;
 	static maxLength = 6;
@@ -136,52 +136,48 @@ class Fish {
 		let xAdjust = 0, yAdjust = 0;
 		if (this.x < -boundary) {
 			// Fish is off left side of screen
-            xAdjust += width + offset;
-        } else if (this.x > width + boundary) {
-        	// Fish is off right side of screen
-            xAdjust -= (width + offset);
-        }
+			xAdjust += width + offset;
+		} 
+		else if (this.x > width + boundary) {
+			// Fish is off right side of screen
+			xAdjust -= (width + offset);
+		}
 
-        if (this.y < -boundary) {
-        	// Fish is off top of screen
-            yAdjust += height + offset;
-        } else if (this.y > height + boundary) {
-        	// Fish is off bottom of screen
-            yAdjust -= (height + offset);
-        }
+		if (this.y < -boundary) {
+			// Fish is off top of screen
+			yAdjust += height + offset;
+		} 
+		else if (this.y > height + boundary) {
+			// Fish is off bottom of screen
+			yAdjust -= (height + offset);
+		}
 
-        // Check if adjustment is needed
-        if (xAdjust !== 0 || yAdjust !== 0) {
-        	this.segs.forEach(s => {
-        		s.shift(xAdjust, yAdjust);
-        	});
+		// Check if adjustment is needed
+		if (xAdjust !== 0 || yAdjust !== 0) {
+			this.segs.forEach(s => {
+				s.shift(xAdjust, yAdjust);
+			});
 		}
 	}
 
 	_avoidBorder() {
 		let xForce = 0, yForce = 0;
-		
-		// Push towards centre if at border
-		let distFromBorderX = border - Math.min(this.x, width - this.x);
-		let distFromBorderY = border - Math.min(this.y, height - this.y);
-		if (distFromBorderX > 0 || distFromBorderY > 0) {
-			const targetX = width/2;
-			const targetY = height/2;
-			const dx = targetX - this.x;
-			const dy = targetY - this.y;
 
-			const distFromCenter = vectorLength(dx, dy);
-			// Vector from current velocity to desired velocity
-			// i.e. acceleration force towards the desired velocity
-			xForce = (Fish.maxVel * dx / distFromCenter) - this.velX;
-			yForce = (Fish.maxVel * dy / distFromCenter) - this.velY;
+		// Distance from center of screen
+		const xDist = width/2 - this.x;
+		const yDist = height/2 - this.y;
 
-			let distScale = Math.max(Math.max(distFromBorderX, 1), Math.max(distFromBorderY, 1));
-			const force = constrainVector(xForce, yForce, 0, Fish.maxForce);
+		const angle = vectorAngle(xDist, yDist) + Math.PI/2;
+		const t_dist = vectorLength(xDist, yDist);
 
-			xForce = force[0] * Fish.borderScale;
-			yForce = force[1] * Fish.borderScale;
-		}
+		// Apply force at right angle to distance vector, 
+		// so fish circles the center of screen
+		xForce = t_dist * Math.cos(angle);
+		yForce = t_dist * Math.sin(angle);
+
+		const force = constrainVector(xForce, yForce, 0, Fish.maxForce);
+		xForce = force[0] * Fish.borderScale;
+		yForce = force[1] * Fish.borderScale;
 		
 		this.accX += xForce;
 		this.accY += yForce;

@@ -182,6 +182,7 @@ class Segment {
 	}
 
 	drawPointA(size) {
+		size = roundVal(size, 10);
 		this.ctx.beginPath();
 
 		const x = this.ax;
@@ -194,6 +195,7 @@ class Segment {
 	}
 
 	drawPointB(size) {
+		size = roundVal(size, 10);
 		this.ctx.beginPath();
 
 		const x = this.bx;
