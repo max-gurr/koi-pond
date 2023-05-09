@@ -76,7 +76,7 @@ class Fish {
 			const lenFactor = numSegs - (i+1);
 
 			segLen = minLen + lenIncrement * lenFactor;
-			tail = new Segment(ctx, head.bx, head.by, segLen, angle);	
+			tail = new Segment(this.ctx, head.bx, head.by, segLen, angle);	
 			
 			segs.push(tail);
 			this.length += segLen;

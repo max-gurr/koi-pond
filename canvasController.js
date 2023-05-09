@@ -1,5 +1,7 @@
-let canvas;
-let ctx;
+let main_canvas;
+let main_ctx;
+let background_canvas;
+let background_ctx;
 let width, height;
 let border;
 
@@ -32,17 +34,23 @@ function init() {
 	// Adjust display
 	document.getElementById("display_num_fish").innerHTML = numFish;
 
-	// Setup canvas
-	canvas = document.getElementById("canvas");
-	ctx = canvas.getContext('2d');
+	// Setup main canvas
+	main_canvas = document.getElementById("canvas");
+	main_ctx = main_canvas.getContext('2d');
 
 	width = window.innerWidth;
 	height = window.innerHeight;
 
 	border = 50;
 
-	canvas.width = width;
-	canvas.height = height;
+	main_canvas.width = width;
+	main_canvas.height = height;
+
+	// Setup offscreen canvas
+	background_canvas = document.createElement('canvas');
+	background_canvas.width = width;
+	background_canvas.height = height;
+	background_ctx = background_canvas.getContext('2d');
 
 	// Make fish
 	school = [];
@@ -55,7 +63,7 @@ function init() {
 
 		// Randomise length of fish
 		const numSegs = parseInt(gaussianRandom(minSegs, maxSegs));
-		const f = new Fish(ctx, xPos, yPos, numSegs);
+		const f = new Fish(background_ctx, xPos, yPos, numSegs);
 
 		// Assign colours
 		const bodyColour = bodyColours[parseInt(Math.random() * bodyColours.length)];
@@ -66,9 +74,6 @@ function init() {
 	}
 	
 	food = [];
-	canvas.addEventListener("mousedown", () => {
-		console.log('hello');
-	});
 }
 
 function measureFrames() {
@@ -88,17 +93,18 @@ function animate() {
 	// const alpha = 1;
 	// ctx.fillStyle = `rgba(30, 65, 90, ${alpha})`;
 	// ctx.fillRect(0, 0, width, height);
-	canvas.width = width;
+	background_canvas.width = width;
+	main_canvas.width = width;
 
 	// Draw food
-	ctx.fillStyle = 'red';
-	ctx.beginPath();
+	background_ctx.fillStyle = 'red';
+	background_ctx.beginPath();
 	food.forEach(f => {
-		ctx.moveTo(f[0], f[1]);
-		ctx.arc(f[0], f[1], 5, 0, 2*Math.PI);
+		background_ctx.moveTo(f[0], f[1]);
+		background_ctx.arc(f[0], f[1], 5, 0, 2*Math.PI);
 	});
-	ctx.closePath();
-	ctx.fill();
+	background_ctx.closePath();
+	background_ctx.fill();
 
 	// Do fishy things
 	let fish;
@@ -115,6 +121,7 @@ function animate() {
 
 	measureFrames();
 
+	main_ctx.drawImage(background_canvas, 0, 0);
 	// Cue next animation frame
 	requestAnimationFrame(this.animate.bind(this));
 }
