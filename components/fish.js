@@ -9,7 +9,7 @@ class Fish {
 	static alignmentScale = 0.5;
 	static cohesionScale = 0.7;
 	static separationScale = 1.5;
-	static borderScale = 4;
+	static borderScale = 3;
 	static foodScale = 8;
 	static grow = true;
 	static maxLength = 6;
@@ -163,9 +163,9 @@ class Fish {
 	_avoidBorder() {
 		let xForce = 0, yForce = 0;
 
-		// Distance from center of screen
-		const xDist = width/2 - this.x;
-		const yDist = height/2 - this.y;
+		// Relative distance from center of screen
+		const xDist = (width/2 - this.x)/(width/2);
+		const yDist = (height/2 - this.y)/(height/2);
 
 		const angle = vectorAngle(xDist, yDist) + Math.PI/2;
 		const t_dist = vectorLength(xDist, yDist);
