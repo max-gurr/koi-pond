@@ -5,7 +5,7 @@ let background_ctx;
 let width, height;
 let border;
 
-let numFish = document.getElementById("num_fish").value;
+let numFish = document.getElementById("num_fish")?.value || 30;
 let school;
 let bodyColours = ['rgb(255, 255, 255)', 
 				   'rgb(255, 255, 255)', 
@@ -33,6 +33,10 @@ let fps;
 function init() {
 	// Adjust display
 	document.getElementById("display_num_fish").innerHTML = numFish;
+	changeAlignment(Fish.alignmentScale*10);
+	changeCohesion(Fish.cohesionScale*10);
+	changeSeparation(Fish.separationScale*10);
+	changeBorder(Fish.borderScale*10);
 
 	// Setup main canvas
 	main_canvas = document.getElementById("canvas");
@@ -143,16 +147,25 @@ function eatFood(index) {
 function changeAlignment(newValue) {
 	val = parseInt(newValue) / 10
 	Fish.alignmentScale = val
+	document.getElementById("display_alignment").innerHTML = val;
 }
 
 function changeCohesion(newValue) {
 	val = parseInt(newValue) / 10
 	Fish.cohesionScale = val
+	document.getElementById("display_cohesion").innerHTML = val;
 }
 
 function changeSeparation(newValue) {
 	val = parseInt(newValue) / 10
 	Fish.separationScale = val
+	document.getElementById("display_separation").innerHTML = val;
+}
+
+function changeBorder(newValue) {
+	val = parseInt(newValue) / 10
+	Fish.borderScale = val
+	document.getElementById("display_border").innerHTML = val;
 }
 
 init();

@@ -8,7 +8,7 @@ class Fish {
 	static separationRadius = Fish.neighbourRadius/1.5;
 	static alignmentScale = 0.5;
 	static cohesionScale = 0.7;
-	static separationScale = 1.5;
+	static separationScale = 1.2;
 	static borderScale = 3;
 	static foodScale = 8;
 	static grow = true;
@@ -167,7 +167,9 @@ class Fish {
 		const xDist = (width/2 - this.x)/(width/2);
 		const yDist = (height/2 - this.y)/(height/2);
 
-		const angle = vectorAngle(xDist, yDist) + Math.PI/2;
+		// Adjust angle to be perpendicular to fish direction, around center of screen
+		// But also want to point slightly towards center of screen
+		const angle = vectorAngle(xDist, yDist) + Math.PI/3;
 		const t_dist = vectorLength(xDist, yDist);
 
 		// Apply force at right angle to distance vector, 
