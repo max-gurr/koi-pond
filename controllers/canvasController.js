@@ -144,7 +144,7 @@ function animate() {
 
 
 function placeFood(event) {
-	food.push([event.clientX, event.clientY]);
+	food.push([event.clientX/draw_scale, event.clientY/draw_scale]);
 }
 
 function eatFood(index) {
