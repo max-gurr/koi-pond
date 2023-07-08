@@ -221,7 +221,7 @@ class Fish {
 
 		// Size coefficient for wiggle
 		// Adjust by length of fish so small fish wiggle more per joint
-		const startSize = 0.03/this.joints.length;
+		const startSize = 0.02/this.joints.length;
 
 		// Adjust wiggle size by acceleration magnitude
 		// So fish wiggles more when accelerating
@@ -560,9 +560,9 @@ class Fish {
 			this.ctx.strokeStyle = this.dotColours[i];
 
 			// Adjust size based on position from head
-			const sizeFactor = 0.75*this.joints.length - i;
-			const sizeIncrement = 1.1;
-			const minSize = 0.5;
+			const sizeFactor = this.joints.length - i;
+			const sizeIncrement = 1;
+			const minSize = 0.25;
 
 			const size = minSize + sizeIncrement * sizeFactor;
 
@@ -575,7 +575,7 @@ class Fish {
 	}
 
 	setDotColours(colourList) {
-		for (let i = 0; i < this.joints.length; i++) {
+		for (let i = 0; i < this.joints.length-1; i++) {
 			// Pick a random colour 
 			const randomColour = colourList[parseInt(Math.random() * colourList.length)];
 			this.dotColours[i] = randomColour;

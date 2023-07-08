@@ -11,9 +11,13 @@ let school;
 let bodyColours = ['rgb(255, 255, 255)', 
 				   'rgb(255, 255, 255)', 
 				   'rgb(255, 255, 255)', 
+				   'rgb(255, 255, 255)', 
 				   'rgb(255, 128, 0)',
 				   'rgb(255, 128, 0)',
-				   'rgb(249, 226, 15)'
+				   'rgb(255, 128, 0)',
+				   'rgb(249, 226, 15)',
+				   'rgb(249, 226, 15)',
+					 'rgb(70, 70, 80)'
 				  ];
 let dotColours = ['rgb(255, 255, 255)', 
 				  'rgb(20, 40, 30)', 
@@ -22,8 +26,7 @@ let dotColours = ['rgb(255, 255, 255)',
 				  'null',
 				  'null',
 				  'null',
-				  'null',
-				  'null',
+				  'null'
 				 ];
 
 let food;
