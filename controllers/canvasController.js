@@ -69,15 +69,15 @@ function init() {
 }
 
 function makeFish() {
-	const minSegs = 2;
-	const maxSegs = 6;
+	const minSegs = 3;
+	const maxSegs = 5;
 
 	// Generate position
 	const xPos = width/2 + (Math.random()*2-1) * (width/2 - border);
 	const yPos = height/2 + (Math.random()*2-1) * (height/2 - border);
 
 	// Randomise length of fish
-	const numSegs = parseInt(gaussianRandom(minSegs, maxSegs));
+	let numSegs = parseInt(gaussianRandom(minSegs, maxSegs));
 	const fish = new Fish(background_ctx, xPos, yPos, numSegs);
 
 	// Assign colours
