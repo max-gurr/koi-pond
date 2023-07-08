@@ -16,7 +16,7 @@ class Fish {
 	
 	ctx;
 	
-	segs;
+	joints;
 	length;
 	x;
 	y;
@@ -32,7 +32,7 @@ class Fish {
 	bodyColour = 'white';
 	dotColours = [];
 
-	constructor(c, x, y, numSegs) {
+	constructor(c, x, y, numJoints) {
 		this.ctx = c
 
 		// Init with random vel
@@ -42,9 +42,9 @@ class Fish {
 		this.velX = Fish.maxVel * Math.cos(angle);
 		this.velY = Fish.maxVel * Math.sin(angle);
 
-		// Make segs facing opposite to direction of velocity
-		const segmentAngle = angle - Math.PI;
-		this.segs = this.constructSegments(x, y, segmentAngle, numSegs);
+		// Make joints facing opposite to direction of velocity
+		const jointAngle = angle - Math.PI;
+		this.joints = this.constructJoints(x, y, jointAngle, numJoints);
 		this._updatePosition();
 
 		this.accX = 0;
@@ -55,37 +55,33 @@ class Fish {
 		this.tick = Math.random() * Math.PI
 	}
 
-	constructSegments(x, y, angle, numSegs) {
+	constructJoints(x, y, angle, numJoints) {
 		this.length = 0;
 
 		const minLen = 4;
-		const lenIncrement = 2;
+		const lenIncrement = 2.5;
 
-		const segs = [];
-		let segLen = minLen + lenIncrement * numSegs;
-		let head = new Segment(this.ctx, x, y, segLen, angle);
+		const joints = [];
+		let jointLen = minLen + lenIncrement * numJoints;
 
-		segs.push(head);
-		this.length += segLen;
+		// Head
+		joints.push(new Joint(this.ctx, x, y, jointLen, angle));
+		this.length += jointLen;
 
-		let tail;
-		for (let i = 0; i < numSegs-1; i++) {
-			// Adjust length of segment based on position
-
+		let joint;
+		for (let i = 0; i < numJoints-1; i++) {
+			// Adjust length of joint based on position
 			// Longest at head
-			const lenFactor = numSegs - (i+1);
-
-			segLen = minLen + lenIncrement * lenFactor;
-			tail = new Segment(this.ctx, head.bx, head.by, segLen, angle);	
+			const lenFactor = numJoints - (i+1);
+			jointLen = minLen + lenIncrement * lenFactor;
 			
-			segs.push(tail);
-			this.length += segLen;
-
-			// Use tail of current segment as head of next segment
-			head = tail;
+			joint = new Joint(this.ctx, x, y, jointLen, angle)
+			joint.setParent(joints[i]);
+			joints.push(joint);
+			this.length += jointLen;
 		}
 
-		return segs;
+		return joints;
 	}
 
 	update() {
@@ -102,8 +98,7 @@ class Fish {
 		this.velX = vel[0];
 		this.velY = vel[1];
 		
-		// Move fish segments
-		this._moveSegments();
+		this._moveJoints();
 		this._updatePosition();
 		
 		// Adjust tick increment by acceleration magnitude
@@ -115,7 +110,6 @@ class Fish {
 
 		// Limit value so it doesn't increase to infinity
 		this.tick = this.tick % (Math.PI * 2);
-
 		
 		// Reset acceleration
 		this.accX = 0;
@@ -123,10 +117,10 @@ class Fish {
 	}
 
 	_updatePosition() {
-		this.x = this.segs[0].ax;
-		this.y = this.segs[0].ay;
-		this.tailX = this.segs[this.segs.length-1].ax;
-		this.tailY = this.segs[this.segs.length-1].ay;
+		this.x = this.joints[0].x;
+		this.y = this.joints[0].y;
+		this.tailX = this.joints[this.joints.length-1].x;
+		this.tailY = this.joints[this.joints.length-1].y;
 	}
 
 	_wrapEdges() {
@@ -154,8 +148,8 @@ class Fish {
 
 		// Check if adjustment is needed
 		if (xAdjust !== 0 || yAdjust !== 0) {
-			this.segs.forEach(s => {
-				s.shift(xAdjust, yAdjust);
+			this.joints.forEach(j => {
+				j.update(xAdjust, yAdjust);
 			});
 		}
 	}
@@ -185,10 +179,10 @@ class Fish {
 		this.accY += yForce;
 	}
 
-	_moveSegments() {
+	_moveJoints() {
 		// Update head with fish vel
-		let head = this.segs[0];
-		head.update(this.velX, this.velY);
+		this.joints[0].update(this.velX, this.velY);
+		this.joints[0].setAngle(vectorAngle(this.velX, this.velY) + Math.PI);
 
 		// Wiggle head point of fish directly, 
 		// 		perpendicular to direction of velocity
@@ -204,46 +198,41 @@ class Fish {
 		// head.update(xAdjust, yAdjust);
 
 		// Wiggle other points by driving angle
-		this._driveSegment(0);
+		this._driveJoint(0);
 
-		// Update other segs
-		let tail;
-		for (let i = 1; i < this.segs.length; i++) {
-			// Follow the previous segment
-			tail = this.segs[i];
-			tail.follow(head.bx, head.by);
+		// Update other joints
+		for (let i = 1; i < this.joints.length; i++) {
+			this.joints[i].followParent();
 
 			// Wiggle by driving angle
-			this._driveSegment(i);
-
-			head = tail;
+			this._driveJoint(i);
 		}
 	}
 
-	_driveSegment(index) {
+	_driveJoint(index) {
 		// Angle of wiggle on sine curve
 		// Head and tail of fish should have same wiggle 
 		// So adjust increment by num of points being driven
-		const angleIncrement = -Math.PI/(this.segs.length);
-		// Point being driven is tail of current segment
-		// So point number is 1 + segment number
+		const angleIncrement = -Math.PI/(this.joints.length);
+		// Point being driven is tail of current joint
+		// So point number is 1 + joint number
 		const wiggleAngle = this.tick + (angleIncrement * (index+1));
 
 
 		// Size coefficient for wiggle
-		// Adjust by length of fish so small fish wiggle more per segment
-		const startSize = 0.03/this.segs.length;
+		// Adjust by length of fish so small fish wiggle more per joint
+		const startSize = 0.03/this.joints.length;
 
 		// Adjust wiggle size by acceleration magnitude
 		// So fish wiggles more when accelerating
 		const accMag = vectorLength(this.accX, this.accY);
 		const scaledAccMag = Math.min(0.015, accMag/3);
-		const sizeIncrement = 0.03/this.segs.length + scaledAccMag;
+		const sizeIncrement = 0.03/this.joints.length + scaledAccMag;
 
-		// Index is an arbitrary multiplier, doesn't need to specifically reference seg/point
+		// Index is an arbitrary multiplier, doesn't need to specifically reference joint
 		const wiggleSize = startSize + (sizeIncrement * index);
 
-		this.segs[index].driveAngle(wiggleSize, wiggleAngle);
+		this.joints[index].driveAngle(wiggleSize, wiggleAngle);
 	}
 
 	flock(school, i) {
@@ -455,8 +444,8 @@ class Fish {
 
 	grow(size) {
 		// Only grow if this fish hasn't reached size limit
-		if (this.segs.length < Fish.maxLength) {
-			this.segs = this.constructSegments(this.x, this.y, this.segs[0].angle, this.segs.length+size);
+		if (this.joints.length < Fish.maxLength) {
+			this.joints = this.constructJoints(this.x, this.y, this.joints[0].angle, this.joints.length + size);
 		}
 	}
 
@@ -480,60 +469,45 @@ class Fish {
 	}
 
 	draw() {
-		const numSegs = this.segs.length;
-		let seg, rightFish = [], leftFish = [];
+		const numJoints = this.joints.length;
+		let joint, rightFish = [], leftFish = [];
 
 		this.ctx.fillStyle = this.bodyColour;
 		this.ctx.strokeStyle = this.bodyColour;
 
-		for (let i = 0; i < numSegs; i++) {
-			seg = this.segs[i];
+		for (let i = 0; i < numJoints; i++) {
+			joint = this.joints[i];
 
 			// Use position from tail to adjust size
 			// Largest at head
-			const sizeFactor = numSegs - i;
+			const sizeFactor = numJoints - i;
 			const sizeIncrement = 1.5;
 			const minSize = 0;
 
-			// Each segment has a point a and a point b
+			// aWidth corresponds to joint parent
+			// bWidth corresponds to the current joint
 			const aWidth = minSize + sizeIncrement * sizeFactor;
-			const bWidth = minSize + sizeIncrement * (sizeFactor-1);
-
-			// Get co-ordinates of points to draw body
-			if (i==0) {
-				// Only draw head of the first segment
-				// For all other segments, the head is a repeat
-				// Of the tail it follows
-				const aPoints = seg.getDrawingPointsA(aWidth);
-				leftFish.push(aPoints[0]);
-				rightFish.push(aPoints[1]);
-			}
 			
-			const bPoints = seg.getDrawingPointsB(bWidth);
-			leftFish.push(bPoints[0]);
-			rightFish.push(bPoints[1]);
+			const drawPoints = joint.getDrawingPoints(aWidth);
+			leftFish.push(drawPoints[0]);
+			rightFish.push(drawPoints[1]);
 			
 			// Drawing fish bodyparts
 			const drawHead = i==0,
-				  	drawFins = i==0,
-				  	drawTail = i==numSegs-1;
+				  	drawFins = i==1,
+				  	drawTail = i==numJoints-1;
 
 			if (drawHead || drawFins || drawTail) {
 				this.ctx.save();
 
-				// Transform canvas to head of segment
-				seg.transformToA();
+				// Transform canvas to head of joint
+				joint.transformToJoint();
 
-				const aWidthSized = aWidth + this.segs.length;
-				const bWidthSized = bWidth + this.segs.length;
+				const aWidthSized = aWidth + numJoints;
 
-				if (drawHead) seg.drawFishHead(aWidth, bWidth);
-				if (drawFins) seg.drawFishFins(aWidth, bWidthSized);
-
-				// Transform canvas to tail of segment
-				seg.transformToB();
-
-				if (drawTail) seg.drawFishTail(aWidthSized, bWidthSized);
+				if (drawHead) joint.drawFishHead(aWidth);
+				if (drawFins) joint.drawFishFins(aWidth);
+				if (drawTail) joint.drawFishTail(aWidthSized);
 				
 				this.ctx.restore();
 			}
@@ -542,6 +516,7 @@ class Fish {
 		// Draw fish body
 		this._drawFishBody(rightFish, leftFish);
 		this._drawDots();
+
 		// this._drawVector(this.velX, this.velY, 20);
 	}
 
@@ -555,7 +530,6 @@ class Fish {
 	}
 
 	_drawFishBody(rightPoints, leftPoints) {
-		
 		this.ctx.beginPath();
 		this.ctx.moveTo(this.x, this.y);
 
@@ -586,13 +560,13 @@ class Fish {
 			this.ctx.strokeStyle = this.dotColours[i];
 
 			// Adjust size based on position from head
-			const sizeFactor = this.segs.length - i;
-			const sizeIncrement = 1.3;
+			const sizeFactor = 0.75*this.joints.length - i;
+			const sizeIncrement = 1.1;
 			const minSize = 0.5;
 
 			const size = minSize + sizeIncrement * sizeFactor;
 
-			this.segs[i].drawPointA(size);
+			this.joints[i].drawPoint(size);
 		}
 	}
 
@@ -601,7 +575,7 @@ class Fish {
 	}
 
 	setDotColours(colourList) {
-		for (let i = 0; i < this.segs.length; i++) {
+		for (let i = 0; i < this.joints.length; i++) {
 			// Pick a random colour 
 			const randomColour = colourList[parseInt(Math.random() * colourList.length)];
 			this.dotColours[i] = randomColour;
