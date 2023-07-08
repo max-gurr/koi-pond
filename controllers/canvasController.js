@@ -4,30 +4,35 @@ let background_canvas;
 let background_ctx;
 let width, height;
 let border;
-let draw_scale = 1.5;
+let draw_scale = 1.25;
 
 let numFish = document.getElementById("num_fish")?.value || 30;
 let school;
-let bodyColours = ['rgb(255, 255, 255)', 
-				   'rgb(255, 255, 255)', 
-				   'rgb(255, 255, 255)', 
-				   'rgb(255, 255, 255)', 
-				   'rgb(255, 128, 0)',
-				   'rgb(255, 128, 0)',
-				   'rgb(255, 128, 0)',
-				   'rgb(249, 226, 15)',
-				   'rgb(249, 226, 15)',
-					 'rgb(70, 70, 80)'
-				  ];
-let dotColours = ['rgb(255, 255, 255)', 
-				  'rgb(20, 40, 30)', 
-				  'rgb(255, 128, 0)', 
-				  'rgb(249, 226, 15)',
-				  'null',
-				  'null',
-				  'null',
-				  'null'
-				 ];
+let bodyColours = [
+	'rgb(255, 255, 255)', 
+	'rgb(255, 255, 255)', 
+	'rgb(255, 255, 255)', 
+	'rgb(255, 255, 255)', 
+	'rgb(255, 255, 255)', 
+	'rgb(255, 255, 255)', 
+	'rgb(255, 128, 0)',
+	'rgb(255, 128, 0)',
+	'rgb(255, 128, 0)',
+	'rgb(255, 128, 0)',
+	'rgb(249, 226, 15)',
+	'rgb(249, 226, 15)',
+	'rgb(70, 70, 80)'
+];
+let dotColours = [
+	'rgb(255, 255, 255)', 
+	'rgb(20, 40, 30)', 
+	'rgb(255, 128, 0)', 
+	'rgb(249, 226, 15)',
+	'null',
+	'null',
+	'null',
+	'null'
+];
 
 let food;
 

@@ -45,7 +45,7 @@ class Joint {
 	followParent() {
 		// Calculate angle to parent
 		this.angle = Math.atan2(this.y - this.parent.y, this.x - this.parent.x);
-
+		
 		// Reposition tail with updated angle
 		this._calcJointPosition();
 	}
@@ -80,6 +80,10 @@ class Joint {
 	}
 
 	drawFishHead(aWidth) {
+		this.ctx.save();
+
+		this.transformToJoint();
+
 		// Draw half-circle for head of fish
 		const curveHeight = Math.round(aWidth*2.5);
 		const curveWidth = 			Math.round(aWidth);
@@ -93,13 +97,19 @@ class Joint {
 		this.ctx.closePath();
 		
 		this.ctx.fill();
+
+		this.ctx.restore();
 	}
 
-	drawFishFins(aWidth) {
+	drawFishFins(aWidth, yAdjust=0) {
+		this.ctx.save();
+
+		this.transformToJoint();
+
 		// Draw fish fins
 		const finSize = 		roundVal(aWidth*1.5, 10);
 		const finX = 				Math.round(aWidth*1.3);
-		const finY = 				Math.round(-aWidth);
+		const finY = 				Math.round(-aWidth+yAdjust);
 		const finStretch = 	1.25;
 
 		this.ctx.beginPath();
@@ -116,9 +126,15 @@ class Joint {
 		
 		this.ctx.closePath();
 		this.ctx.fill(); 
+
+		this.ctx.restore();
 	}
 
 	drawFishTail(aWidth) {
+		this.ctx.save();
+
+		this.transformToJoint();
+
 		const tailX = 				0;
 		const tailY = 				Math.round(-aWidth/3);
 		const tailSize = 			Math.round(aWidth*1.5);
@@ -138,6 +154,8 @@ class Joint {
 		
 		this.ctx.closePath();
 		this.ctx.fill(); 
+
+		this.ctx.restore();
 	}
 
 	drawPoint(size) {

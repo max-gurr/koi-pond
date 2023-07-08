@@ -2,7 +2,7 @@ class Fish {
 	static maxVel = 1.25;
 	static minVel = 0.75;
 	static maxForce = 0.0014;
-	static neighbourRadius = 60;
+	static neighbourRadius = 50;
 	static neighbourAngleMax = Math.PI/1.75;
 	static neighbourAngleMin = 0;
 	static separationRadius = Fish.neighbourRadius/1.5;
@@ -263,9 +263,10 @@ class Fish {
 				const isRepelledByNeighbour = dist > 0 && 
 					dist <= Fish.separationRadius;
 
-				if (isAttractedToNeighbour) {
+				if (isAttractedToNeighbour || isRepelledByNeighbour) {
 					neighbourCount += 1;
 					
+					if (isAttractedToNeighbour) {
 						// Alignment
 						alignmentX += neighbour.velX;
 						alignmentY += neighbour.velY;
@@ -273,19 +274,19 @@ class Fish {
 						// Cohesion
 						cohesionX += neighbour.x;
 						cohesionY += neighbour.y;
+					}
 					
-						if (isRepelledByNeighbour) {
-							// Separation
-							// Point away from neighbour head
-							const dx = this.x - neighbour.x;
-							const dy = this.y - neighbour.y;
-							// Magnitude of separation is inverse of view distance
-							const separationMagnitude = Fish.neighbourRadius - dist;
-							// Scale distance components by separation magnitude
-							separationX += separationMagnitude * dx/dist;
-							separationY += separationMagnitude * dy/dist;
-						}
-
+					if (isRepelledByNeighbour) {
+						// Separation
+						// Point away from neighbour head
+						const dx = this.x - neighbour.x;
+						const dy = this.y - neighbour.y;
+						// Magnitude of separation is inverse of view distance
+						const separationMagnitude = Fish.neighbourRadius - dist;
+						// Scale distance components by separation magnitude
+						separationX += separationMagnitude * dx/dist;
+						separationY += separationMagnitude * dy/dist;
+					
 						// Point away from neighbour tail
 						const tailDx = this.x - neighbour.tailX;
 						const tailDy = this.y - neighbour.tailY;
@@ -294,6 +295,7 @@ class Fish {
 						separationX += tailSeparationMagnitude * tailDx/dist;
 						separationY += tailSeparationMagnitude * tailDy/dist;
 						
+					}
 				}
 			}
 
@@ -493,23 +495,19 @@ class Fish {
 			rightFish.push(drawPoints[1]);
 			
 			// Drawing fish bodyparts
-			const drawHead = i==0,
-				  	drawFins = i==1,
-				  	drawTail = i==numJoints-1;
+			const aWidthSized = aWidth + numJoints;
 
-			if (drawHead || drawFins || drawTail) {
-				this.ctx.save();
-
-				// Transform canvas to head of joint
-				joint.transformToJoint();
-
-				const aWidthSized = aWidth + numJoints;
-
-				if (drawHead) joint.drawFishHead(aWidth);
-				if (drawFins) joint.drawFishFins(aWidth);
-				if (drawTail) joint.drawFishTail(aWidthSized);
-				
-				this.ctx.restore();
+			if (i == 0) {
+				joint.drawFishHead(aWidth);
+			}
+			else if (i == 1) {
+				joint.drawFishFins(aWidth);
+			}
+			else if (i == numJoints - 1) {
+				joint.drawFishTail(aWidthSized);
+			}
+			else if (numJoints > 4 && i == 3) {
+				joint.drawFishFins(aWidth*0.9,-0);
 			}
 		}
 
