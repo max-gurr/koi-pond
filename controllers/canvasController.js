@@ -117,7 +117,7 @@ function animate() {
 		fish.draw();
 	}
 
-	measureFrames();
+	// measureFrames();
 
 	main_ctx.drawImage(background_canvas, 0, 0);
 	// Cue next animation frame
