@@ -4,6 +4,7 @@ let background_canvas;
 let background_ctx;
 let width, height;
 let border;
+let draw_scale = 1.5;
 
 let numFish = document.getElementById("num_fish")?.value || 30;
 let school;
@@ -36,13 +37,13 @@ function init() {
 	main_canvas = document.getElementById("canvas");
 	main_ctx = main_canvas.getContext('2d');
 
-	width = window.innerWidth;
-	height = window.innerHeight;
+	main_canvas.width = window.innerWidth;
+	main_canvas.height = window.innerHeight;
+
+	width = window.innerWidth/draw_scale;
+	height = window.innerHeight/draw_scale;
 
 	border = 50;
-
-	main_canvas.width = width;
-	main_canvas.height = height;
 
 	// Setup offscreen canvas
 	background_canvas = document.createElement('canvas');
@@ -92,7 +93,7 @@ function animate() {
 	// ctx.fillStyle = `rgba(30, 65, 90, ${alpha})`;
 	// ctx.fillRect(0, 0, width, height);
 	background_canvas.width = width;
-	main_canvas.width = width;
+	main_canvas.width = width*draw_scale;
 
 	// Draw food
 	background_ctx.fillStyle = 'red';
@@ -119,7 +120,11 @@ function animate() {
 
 	// measureFrames();
 
-	main_ctx.drawImage(background_canvas, 0, 0);
+	// background_ctx.scale(2,2);
+
+	main_ctx.drawImage(background_canvas, 0, 0, width*draw_scale, height*draw_scale);
+	// main_ctx.scale(2, 2);
+
 	// Cue next animation frame
 	requestAnimationFrame(this.animate.bind(this));
 }
