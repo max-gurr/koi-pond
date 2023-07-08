@@ -2,14 +2,14 @@ class Fish {
 	static maxVel = 1.25;
 	static minVel = 0.75;
 	static maxForce = 0.0014;
-	static neighbourRadius = 50;
-	static neighbourAngleMax = Math.PI/2;
+	static neighbourRadius = 60;
+	static neighbourAngleMax = Math.PI/1.75;
 	static neighbourAngleMin = 0;
 	static separationRadius = Fish.neighbourRadius/1.5;
 	static alignmentScale = 0.5;
 	static cohesionScale = 0.7;
 	static separationScale = 1.2;
-	static borderScale = 3;
+	static borderScale = 2.5;
 	static foodScale = 8;
 	static grow = true;
 	static maxLength = 6;
@@ -271,14 +271,12 @@ class Fish {
 					angle <= Fish.neighbourAngleMax && 
 					angle >= Fish.neighbourAngleMin
 				// For separation 
-				// Repel all nearby fish
 				const isRepelledByNeighbour = dist > 0 && 
 					dist <= Fish.separationRadius;
 
-				if (isAttractedToNeighbour || isRepelledByNeighbour) {
+				if (isAttractedToNeighbour) {
 					neighbourCount += 1;
 					
-					if (isAttractedToNeighbour) {
 						// Alignment
 						alignmentX += neighbour.velX;
 						alignmentY += neighbour.velY;
@@ -286,19 +284,18 @@ class Fish {
 						// Cohesion
 						cohesionX += neighbour.x;
 						cohesionY += neighbour.y;
-					}
-
-					if (isRepelledByNeighbour) {
-						// Separation
-						// Point away from neighbour head
-						const dx = this.x - neighbour.x;
-						const dy = this.y - neighbour.y;
-						// Magnitude of separation is inverse of view distance
-						const separationMagnitude = Fish.neighbourRadius - dist;
-						// Scale distance components by separation magnitude
-						separationX += separationMagnitude * dx/dist;
-						separationY += separationMagnitude * dy/dist;
-
+					
+						if (isRepelledByNeighbour) {
+							// Separation
+							// Point away from neighbour head
+							const dx = this.x - neighbour.x;
+							const dy = this.y - neighbour.y;
+							// Magnitude of separation is inverse of view distance
+							const separationMagnitude = Fish.neighbourRadius - dist;
+							// Scale distance components by separation magnitude
+							separationX += separationMagnitude * dx/dist;
+							separationY += separationMagnitude * dy/dist;
+						}
 
 						// Point away from neighbour tail
 						const tailDx = this.x - neighbour.tailX;
@@ -307,8 +304,7 @@ class Fish {
 						// Scale distance components by separation magnitude
 						separationX += tailSeparationMagnitude * tailDx/dist;
 						separationY += tailSeparationMagnitude * tailDy/dist;
-
-					}
+						
 				}
 			}
 
@@ -357,53 +353,53 @@ class Fish {
 
 	applyAlignment(alignmentX, alignmentY) {
 		// Normalise
-		const alignment = constrainVector(alignmentX, alignmentY, 0, 1);
+		// const alignment = constrainVector(alignmentX, alignmentY, 0, 1);
 
 		// Force = difference in velocity
-		let xForce = alignment[0] * Fish.maxVel - this.velX;
-        let yForce = alignment[1] * Fish.maxVel - this.velY;
+		let xForce = alignmentX - this.velX;
+		let yForce = alignmentY - this.velY;
 
-        // Limit force magnitude
-        const force = constrainVector(xForce, yForce, 0, Fish.maxForce);
+		// Limit force magnitude
+		const force = constrainVector(xForce, yForce, 0, Fish.maxForce);
 
-        // Adjust by behaviour multipler
-        xForce = force[0] * Fish.alignmentScale;
-        yForce = force[1] * Fish.alignmentScale;
+		// Adjust by behaviour multipler
+		xForce = force[0] * Fish.alignmentScale;
+		yForce = force[1] * Fish.alignmentScale;
 
-        // Add to acc
-        this.accX += xForce;
-        this.accY += yForce;
+		// Add to acc
+		this.accX += xForce;
+		this.accY += yForce;
 	}
 
 	applyCohesion(cohesionX, cohesionY) {
 		// Desired velocity
-        const dx = cohesionX - this.x;
-        const dy = cohesionY - this.y;
+		const dx = cohesionX - this.x;
+		const dy = cohesionY - this.y;
 
-        // Normalise
-        const cohesion = constrainVector(cohesionX, cohesionY, 0, 1);
-        // Force to get to desired velocity
-        let xForce = cohesion[0] * Fish.maxVel - this.velX;
-        let yForce = cohesion[1] * Fish.maxVel - this.velY;
+		// Normalise
+		// const cohesion = constrainVector(cohesionX, cohesionY, 0, 1);
+		// Force to get to desired velocity
+		let xForce = dx - this.velX;
+		let yForce = dy - this.velY;
 
-        const force = constrainVector(xForce, yForce, 0, Fish.maxForce);
+		const force = constrainVector(xForce, yForce, 0, Fish.maxForce);
 
-        // Scale by behaviour multiplier
-        xForce = force[0] * Fish.cohesionScale;
-        yForce = force[1] * Fish.cohesionScale;
+		// Scale by behaviour multiplier
+		xForce = force[0] * Fish.cohesionScale;
+		yForce = force[1] * Fish.cohesionScale;
 
-        // Add to acceleration
-        this.accX += xForce;
-        this.accY += yForce;
+		// Add to acceleration
+		this.accX += xForce;
+		this.accY += yForce;
 	}
 
 	applySeparation(separationX, separationY) {
 		// Normalise
-		const separation = constrainVector(separationX, separationY, 0, 1);
+		// const separation = constrainVector(separationX, separationY, 0, 1);
 
 		// Force = difference in velocity
-		let xForce = separation[0] * Fish.maxVel - this.velX;
-		let yForce = separation[1] * Fish.maxVel - this.velY;
+		let xForce = separationX - this.velX;
+		let yForce = separationY - this.velY;
 
 		const force = constrainVector(xForce, yForce, 0, Fish.maxForce);
 
