@@ -56,26 +56,31 @@ function init() {
 
 	// Make fish
 	school = [];
-	const minSegs = 2;
-	const maxSegs = 6;
 	for (let i = 0; i < numFish; i++) {
-		// Generate position
-		const xPos = width/2 + (Math.random()*2-1) * (width/2 - border);
-		const yPos = height/2 + (Math.random()*2-1) * (height/2 - border);
-
-		// Randomise length of fish
-		const numSegs = parseInt(gaussianRandom(minSegs, maxSegs));
-		const f = new Fish(background_ctx, xPos, yPos, numSegs);
-
-		// Assign colours
-		const bodyColour = bodyColours[parseInt(Math.random() * bodyColours.length)];
-		f.setBodyColour(bodyColour);
-		f.setDotColours(dotColours);
-
-		school.push(f);	
+		school.push(makeFish());	
 	}
 	
 	food = [];
+}
+
+function makeFish() {
+	const minSegs = 2;
+	const maxSegs = 6;
+
+	// Generate position
+	const xPos = width/2 + (Math.random()*2-1) * (width/2 - border);
+	const yPos = height/2 + (Math.random()*2-1) * (height/2 - border);
+
+	// Randomise length of fish
+	const numSegs = parseInt(gaussianRandom(minSegs, maxSegs));
+	const fish = new Fish(background_ctx, xPos, yPos, numSegs);
+
+	// Assign colours
+	const bodyColour = bodyColours[parseInt(Math.random() * bodyColours.length)];
+	fish.setBodyColour(bodyColour);
+	fish.setDotColours(dotColours);
+
+	return fish;
 }
 
 function measureFrames() {

@@ -520,11 +520,16 @@ class Fish {
 		// this._drawVector(this.velX, this.velY, 20);
 	}
 
-	_drawVector(x, y, scale = 1) {
+	_drawVector(x, y, lineLength = 10) {
 		this.ctx.strokeStyle = 'red';
+
+		let angle = vectorAngle(x, y);
+		let xDraw = lineLength * Math.cos(angle);
+		let yDraw = lineLength * Math.sin(angle);
+
 		this.ctx.beginPath();
 		this.ctx.moveTo(this.x, this.y);
-		this.ctx.lineTo(this.x + x * scale, this.y + y * scale);
+		this.ctx.lineTo(this.x + xDraw, this.y + yDraw);
 		this.ctx.closePath();
 		this.ctx.stroke();
 	}

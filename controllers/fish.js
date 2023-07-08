@@ -25,9 +25,16 @@ function changeBorder(newValue) {
 }
 
 function adjustNumFish(newValue) {
+	while (school.length < newValue) {
+		school.push(makeFish());
+	}
+
+	while (school.length > newValue) {
+		school.pop();
+	}
+	
 	numFish = newValue;
 	document.getElementById("display_num_fish").innerHTML = newValue;
-	init();
 }
 
 // Adjust display
