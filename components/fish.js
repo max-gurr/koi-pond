@@ -1,15 +1,15 @@
 class Fish {
 	static maxVel = 1.25;
 	static minVel = 0.5;
-	static maxForce = 0.0014;
+	static maxForce = 0.004;
 	static neighbourRadius = 50;
 	static neighbourAngleMax = Math.PI/1.75;
 	static neighbourAngleMin = 0;
 	static separationRadius = Fish.neighbourRadius/1.5;
 	static alignmentScale = 0.7;
-	static cohesionScale = 0.7;
+	static cohesionScale = 0.9;
 	static separationScale = 1.4;
-	static borderScale = 2.5;
+	static borderScale = 1.5;
 	static foodScale = 8;
 	static grow = true;
 	static maxLength = 6;
@@ -116,7 +116,7 @@ class Fish {
 		// So fish wiggles faster when accelerating
 		const defaultTick = 0.05;
 		const accMag = vectorLength(this.accX, this.accY);
-		const scaledAccMag = accMag * 10;
+		const scaledAccMag = accMag * 6;
 
 		this.tick += defaultTick + scaledAccMag;
 
@@ -225,7 +225,7 @@ class Fish {
 		// Adjust wiggle size by acceleration magnitude
 		// So fish wiggles more when accelerating
 		const accMag = vectorLength(this.accX, this.accY);
-		const scaledAccMag = Math.min(0.015, accMag/2);
+		const scaledAccMag = accMag/2;
 		const sizeIncrement = 0.03/this.joints.length + scaledAccMag;
 
 		// Index is an arbitrary multiplier, doesn't need to specifically reference joint
@@ -245,52 +245,46 @@ class Fish {
 	}
 
 	flockTo(neighbour) {
+		this.neighbourCount += 1;
+
 		const view = this.viewToNeighbour(neighbour),
 					dist = view[0],
 					angle = view[1];
 
 		// For alignment & cohesion,
 		// Only go towards fish that are inside view angle
-		const isAttractedToNeighbour = dist > 0 && 
-			dist <= Fish.neighbourRadius && 
-			angle <= Fish.neighbourAngleMax && 
-			angle >= Fish.neighbourAngleMin
-		// For separation 
-		const isRepelledByNeighbour = dist > 0 && 
-			dist <= Fish.separationRadius;
+		if (angle <= Fish.neighbourAngleMax && angle >= Fish.neighbourAngleMin) {
+			// Alignment
+			this.alignmentX += neighbour.velX;
+			this.alignmentY += neighbour.velY;
 
-		if (isAttractedToNeighbour || isRepelledByNeighbour) {
-			this.neighbourCount += 1;
-			
-			if (isAttractedToNeighbour) {
-				// Alignment
-				this.alignmentX += neighbour.velX;
-				this.alignmentY += neighbour.velY;
+			// Cohesion
+			this.cohesionX += neighbour.x;
+			this.cohesionY += neighbour.y;
 
-				// Cohesion
-				this.cohesionX += neighbour.x;
-				this.cohesionY += neighbour.y;
-			}
-			
-			if (isRepelledByNeighbour) {
-				// Separation
-				// Point away from neighbour head
-				const dx = this.x - neighbour.x;
-				const dy = this.y - neighbour.y;
-				// Magnitude of separation is inverse of view distance
-				const separationMagnitude = Fish.neighbourRadius - dist;
+			// Point away from neighbour tail
+			const tailDx = this.x - neighbour.tailX;
+			const tailDy = this.y - neighbour.tailY;
+			const tailDist = vectorLength(tailDx, tailDy);
+			if (tailDist <= Fish.separationRadius) {
+				const tailSeparationMagnitude = Fish.neighbourRadius - tailDist;
 				// Scale distance components by separation magnitude
-				this.separationX += separationMagnitude * dx/dist;
-				this.separationY += separationMagnitude * dy/dist;
-			
-				// Point away from neighbour tail
-				const tailDx = this.x - neighbour.tailX;
-				const tailDy = this.y - neighbour.tailY;
-				const tailSeparationMagnitude = Fish.neighbourRadius - vectorLength(tailDx, tailDy);
-				// Scale distance components by separation magnitude
-				this.separationX += tailSeparationMagnitude * tailDx/dist;
-				this.separationY += tailSeparationMagnitude * tailDy/dist;	
+				this.separationX += tailSeparationMagnitude * tailDx/tailDist;
+				this.separationY += tailSeparationMagnitude * tailDy/tailDist;	
 			}
+		}
+
+		// Separate from any fish within range, regardless of angle
+		if (dist <= Fish.separationRadius) {
+			// Point away from neighbour head
+			const dx = this.x - neighbour.x;
+			const dy = this.y - neighbour.y;
+			// Magnitude of separation is inverse of view distance
+			let separationMagnitude = Fish.neighbourRadius - dist;
+
+			// Scale distance components by separation magnitude
+			this.separationX += separationMagnitude * dx/dist;
+			this.separationY += separationMagnitude * dy/dist;
 		}
 	}
 
