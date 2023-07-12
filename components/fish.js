@@ -1,6 +1,6 @@
 class Fish {
 	static maxVel = 1.25;
-	static minVel = 0.75;
+	static minVel = 0.5;
 	static maxForce = 0.0014;
 	static neighbourRadius = 50;
 	static neighbourAngleMax = Math.PI/1.75;
@@ -114,10 +114,11 @@ class Fish {
 		
 		// Adjust tick increment by acceleration magnitude
 		// So fish wiggles faster when accelerating
+		const defaultTick = 0.05;
 		const accMag = vectorLength(this.accX, this.accY);
-		const scaledAccMag = accMag * 1.25;
+		const scaledAccMag = accMag * 10;
 
-		this.tick += 0.075 + Math.min(0.2, scaledAccMag);
+		this.tick += defaultTick + scaledAccMag;
 
 		// Limit value so it doesn't increase to infinity
 		this.tick = this.tick % (Math.PI * 2);
@@ -224,7 +225,7 @@ class Fish {
 		// Adjust wiggle size by acceleration magnitude
 		// So fish wiggles more when accelerating
 		const accMag = vectorLength(this.accX, this.accY);
-		const scaledAccMag = Math.min(0.015, accMag/3);
+		const scaledAccMag = Math.min(0.015, accMag/2);
 		const sizeIncrement = 0.03/this.joints.length + scaledAccMag;
 
 		// Index is an arbitrary multiplier, doesn't need to specifically reference joint

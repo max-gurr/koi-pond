@@ -4,7 +4,7 @@
 		<!-- Scripts -->
 		<script src="util.js" defer></script>
 
-		<script src="components/segment.js" defer></script>
+		<script src="components/joint.js" defer></script>
 		<script src="components/fish.js" defer></script>
 		<script src="components/lilypad.js" type="module"></script>
 		<script src="components/lilyflower.js" type="module"></script>
@@ -312,32 +312,5 @@
 		<!-- Fish -->
 		<canvas id="canvas"></canvas>
 
-		<!-- Controls & Config -->
-		<div class="controls">
-			<label for="num_fish">Fish: <span id="display_num_fish"></span></label>
-			<input type="range" name="num_fish" id="num_fish" value="5" min="1" max="200" oninput="adjustNumFish(this.value)" />
-			<p>FR: <span id="display_framerate"></span></p>
-		</div>
-
-		<div class="config">
-			<div class="config__row">
-				<label for="alignment">Alignment: 
-					<span id="display_alignment"></span>
-				</label>
-				<input id="alignment_value" type="range" min="0" max="20" value="3" oninput="changeAlignment(this.value)" />
-			</div>
-			<div class="config__row">
-				<label for="cohesion">Cohesion: 
-					<span id="display_cohesion"></span>
-				</label>
-				<input id="cohesion_value" type="range" min="0" max="20" value="5" oninput="changeCohesion(this.value)" />
-			</div>
-			<div class="config__row">
-				<label for="separation">Separation: 
-					<span id="display_separation"></span>
-				</label>
-				<input id="separation_value" type="range" min="0" max="20" value="15" oninput="changeSeparation(this.value)" />
-			</div>
-		</div>
 	</body>
 </html>

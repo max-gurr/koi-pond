@@ -97,14 +97,18 @@ function measureFrames() {
     times.push(now);
     fps = times.length;
 
-   	document.getElementById("display_framerate").innerHTML = fps;
+   	let frEl = document.getElementById("display_framerate");
+		if (frEl != null) {
+			frEl.innerHTML = fps;
+		}
 }
 
 function animate() {
 	// Draw background
-	// const alpha = 1;
-	// ctx.fillStyle = `rgba(30, 65, 90, ${alpha})`;
-	// ctx.fillRect(0, 0, width, height);
+	// const alpha = 0.08;
+	// main_ctx.fillStyle = `rgba(0, 0, 20, ${alpha})`;
+	// main_ctx.fillRect(0, 0, width*draw_scale, height*draw_scale);
+
 	background_canvas.width = width;
 	main_canvas.width = width*draw_scale;
 
@@ -146,12 +150,8 @@ function animate() {
 		fish1.draw();
 	}
 
-	// measureFrames();
-
-	// background_ctx.scale(2,2);
-
+	measureFrames();
 	main_ctx.drawImage(background_canvas, 0, 0, width*draw_scale, height*draw_scale);
-	// main_ctx.scale(2, 2);
 
 	// Cue next animation frame
 	requestAnimationFrame(this.animate.bind(this));
@@ -174,7 +174,7 @@ window.addEventListener("resize", init);
 window.onunload = function() {
     console.log("about to clear event listeners prior to leaving page");
     
-    window.removeEventListener('resize', init);
+    window.removeEventListener("resize", init);
     document.body.removeEventListener("mousedown", placeFood);
     
     return;

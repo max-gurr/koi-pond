@@ -138,7 +138,7 @@ class Joint {
 		const tailX = 				0;
 		const tailY = 				Math.round(-aWidth/3);
 		const tailSize = 			Math.round(aWidth*1.5);
-		const tailStretch = 	roundVal(aWidth/4, 10);
+		const tailStretch = 	Math.round(aWidth/4);
 
 		this.ctx.beginPath();
 
@@ -159,7 +159,7 @@ class Joint {
 	}
 
 	drawPoint(size) {
-		size = roundVal(size, 10);
+		size = Math.round(size);
 		this.ctx.beginPath();
 
 		this.ctx.moveTo(this.x, this.y);

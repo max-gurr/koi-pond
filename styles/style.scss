@@ -27,30 +27,7 @@ canvas {
 	left: 0;
 	max-width: 100%;
 	max-height: 100%;
-	filter: blur(2px);
-}
-
-.controls {
-	position: absolute;
-	color: white;
-	padding: 5px;
-	z-index: 1;
-	bottom: 0;
-	left: 50%;
-	transform: translate(-50%, 0);
-	text-align: center;
-	display: none;
-}
-
-.config {
-	position: absolute;
-	color: white;
-	padding: 5px;
-	z-index: 1;
-	top: 0;
-	right: 0;
-	text-align: center;
-	display: none;
+	filter: blur(2px) brightness(0.85);
 }
 
 #water {
