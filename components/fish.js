@@ -2,15 +2,18 @@ class Fish {
 	static maxVel = 1.25;
 	static minVel = 0.5;
 	static maxForce = 0.004;
+
 	static neighbourRadius = 50;
 	static neighbourAngleMax = Math.PI/1.75;
 	static neighbourAngleMin = 0;
 	static separationRadius = Fish.neighbourRadius/1.5;
+
 	static alignmentScale = 0.7;
 	static cohesionScale = 0.9;
 	static separationScale = 1.4;
-	static borderScale = 1.5;
+	static borderScale = 1;
 	static foodScale = 4;
+
 	static grow = true;
 	static maxLength = 6;
 	
@@ -32,8 +35,8 @@ class Fish {
 	bodyColour = 'white';
 	dotColours = [];
 
-	
 	neighbourCount;
+	separationCount;
 	cohesionX;
 	cohesionY;
 	alignmentX;
@@ -240,6 +243,7 @@ class Fish {
 
 	resetFlockingValues() {
 		this.neighbourCount = 0;
+		this.separationCount = 0;
 		this.cohesionX = 0;
 		this.cohesionY = 0;
 		this.alignmentX = 0;
@@ -280,6 +284,8 @@ class Fish {
 
 		// Separate from any fish within range, regardless of angle
 		if (dist <= Fish.separationRadius) {
+			this.separationCount += 1;
+
 			// Point away from neighbour head
 			const dx = this.x - neighbour.x;
 			const dy = this.y - neighbour.y;
@@ -302,8 +308,8 @@ class Fish {
 			let scaledCohesionX = this.cohesionX / this.neighbourCount;
 			let scaledCohesionY = this.cohesionY / this.neighbourCount;
 
-			let scaledSeparationX = this.separationX / this.neighbourCount;
-			let scaledSeparationY = this.separationY / this.neighbourCount;
+			let scaledSeparationX = this.separationX / this.separationCount;
+			let scaledSeparationY = this.separationY / this.separationCount;
 
 			this.applyAlignment(scaleAlignmentX, scaledAlignmentY);
 			this.applyCohesion(scaledCohesionX, scaledCohesionY);
