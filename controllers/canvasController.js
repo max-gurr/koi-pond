@@ -119,16 +119,31 @@ function animate() {
 	background_ctx.fill();
 
 	// Do fishy things
-	let fish;
+	let fish1, fish2;
 	for (let i = 0; i < numFish; i++) {
-		fish = school[i];
+		fish1 = school[i];
+
+		for (let j = i+1; j < numFish; j++) {
+			if (i !== j) {
+				fish2 = school[j];
+				// View from this fish to neighbour
+				const distVals = fish1.distToNeighbour(fish2);
+				const dist = vectorLength(distVals[0], distVals[1]);
+
+				if (dist < Fish.neighbourRadius) {
+					fish1.flockTo(fish2);
+					fish2.flockTo(fish1);
+				}
+			}
+		}
 		
-		fish.flock(school, i);
+		fish1.applyFlocking();
+		fish1.resetFlockingValues();
 
-		fish.seekFood(food);
+		fish1.seekFood(food);
 
-		fish.update();
-		fish.draw();
+		fish1.update();
+		fish1.draw();
 	}
 
 	// measureFrames();

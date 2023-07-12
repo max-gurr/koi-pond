@@ -6,9 +6,9 @@ class Fish {
 	static neighbourAngleMax = Math.PI/1.75;
 	static neighbourAngleMin = 0;
 	static separationRadius = Fish.neighbourRadius/1.5;
-	static alignmentScale = 0.5;
+	static alignmentScale = 0.7;
 	static cohesionScale = 0.7;
-	static separationScale = 1.2;
+	static separationScale = 1.4;
 	static borderScale = 2.5;
 	static foodScale = 8;
 	static grow = true;
@@ -32,6 +32,15 @@ class Fish {
 	bodyColour = 'white';
 	dotColours = [];
 
+	
+	neighbourCount;
+	cohesionX;
+	cohesionY;
+	alignmentX;
+	alignmentY;
+	separationX;
+	separationY;
+
 	constructor(c, x, y, numJoints) {
 		this.ctx = c
 
@@ -42,13 +51,15 @@ class Fish {
 		this.velX = Fish.maxVel * Math.cos(angle);
 		this.velY = Fish.maxVel * Math.sin(angle);
 
+		this.accX = 0;
+		this.accY = 0;
+
 		// Make joints facing opposite to direction of velocity
 		const jointAngle = angle - Math.PI;
 		this.joints = this.constructJoints(x, y, jointAngle, numJoints);
 		this._updatePosition();
 
-		this.accX = 0;
-		this.accY = 0;
+		this.resetFlockingValues();
 
 		// Individual ticker used for wiggle movement
 		// Randomise start values so wiggles aren't synchronised
@@ -184,19 +195,6 @@ class Fish {
 		this.joints[0].update(this.velX, this.velY);
 		this.joints[0].setAngle(vectorAngle(this.velX, this.velY) + Math.PI);
 
-		// Wiggle head point of fish directly, 
-		// 		perpendicular to direction of velocity
-
-		// Size of wiggle movement
-		// let adjustSize = 0.1 * Math.sin(this.tick);
-		// let adjustAngle = head.angle - Math.PI/2;
-
-		// // Vector of wiggle movement
-		// let xAdjust = adjustSize * Math.cos(adjustAngle);
-		// let yAdjust = adjustSize * Math.sin(adjustAngle);
-
-		// head.update(xAdjust, yAdjust);
-
 		// Wiggle other points by driving angle
 		this._driveJoint(0);
 
@@ -235,93 +233,97 @@ class Fish {
 		this.joints[index].driveAngle(wiggleSize, wiggleAngle);
 	}
 
-	flock(school, i) {
-		let neighbourCount = 0;
-		let cohesionX = 0;
-		let cohesionY = 0;
-		let alignmentX = 0;
-		let alignmentY = 0;
-		let separationX = 0;
-		let separationY = 0;
+	resetFlockingValues() {
+		this.neighbourCount = 0;
+		this.cohesionX = 0;
+		this.cohesionY = 0;
+		this.alignmentX = 0;
+		this.alignmentY = 0;
+		this.separationX = 0;
+		this.separationY = 0;
+	}
 
-		let neighbour;
-		for (let j = 0; j < numFish; j++) {
-			if (i !== j) {
-				neighbour = school[j];
-				// View from this fish to neighbour
-				const view = this._viewToNeighbour(neighbour);
-				const dist = view[0];
-				const angle = view[1];
+	flockTo(neighbour) {
+		const view = this.viewToNeighbour(neighbour),
+					dist = view[0],
+					angle = view[1];
 
-				// For alignment & cohesion,
-				// Only go towards fish that are inside view angle
-				const isAttractedToNeighbour = dist > 0 && 
-					dist <= Fish.neighbourRadius && 
-					angle <= Fish.neighbourAngleMax && 
-					angle >= Fish.neighbourAngleMin
-				// For separation 
-				const isRepelledByNeighbour = dist > 0 && 
-					dist <= Fish.separationRadius;
+		// For alignment & cohesion,
+		// Only go towards fish that are inside view angle
+		const isAttractedToNeighbour = dist > 0 && 
+			dist <= Fish.neighbourRadius && 
+			angle <= Fish.neighbourAngleMax && 
+			angle >= Fish.neighbourAngleMin
+		// For separation 
+		const isRepelledByNeighbour = dist > 0 && 
+			dist <= Fish.separationRadius;
 
-				if (isAttractedToNeighbour || isRepelledByNeighbour) {
-					neighbourCount += 1;
-					
-					if (isAttractedToNeighbour) {
-						// Alignment
-						alignmentX += neighbour.velX;
-						alignmentY += neighbour.velY;
+		if (isAttractedToNeighbour || isRepelledByNeighbour) {
+			this.neighbourCount += 1;
+			
+			if (isAttractedToNeighbour) {
+				// Alignment
+				this.alignmentX += neighbour.velX;
+				this.alignmentY += neighbour.velY;
 
-						// Cohesion
-						cohesionX += neighbour.x;
-						cohesionY += neighbour.y;
-					}
-					
-					if (isRepelledByNeighbour) {
-						// Separation
-						// Point away from neighbour head
-						const dx = this.x - neighbour.x;
-						const dy = this.y - neighbour.y;
-						// Magnitude of separation is inverse of view distance
-						const separationMagnitude = Fish.neighbourRadius - dist;
-						// Scale distance components by separation magnitude
-						separationX += separationMagnitude * dx/dist;
-						separationY += separationMagnitude * dy/dist;
-					
-						// Point away from neighbour tail
-						const tailDx = this.x - neighbour.tailX;
-						const tailDy = this.y - neighbour.tailY;
-						const tailSeparationMagnitude = Fish.neighbourRadius - vectorLength(tailDx, tailDy);
-						// Scale distance components by separation magnitude
-						separationX += tailSeparationMagnitude * tailDx/dist;
-						separationY += tailSeparationMagnitude * tailDy/dist;
-						
-					}
-				}
+				// Cohesion
+				this.cohesionX += neighbour.x;
+				this.cohesionY += neighbour.y;
 			}
-
-			// To get average forces across neighbour group
-			// Divide each force component by the number of fish it came from
-			if (neighbourCount > 0) {
-				alignmentX = alignmentX / neighbourCount;
-				alignmentY = alignmentY / neighbourCount;
-
-				cohesionX = cohesionX / neighbourCount;
-				cohesionY = cohesionY / neighbourCount;
-
-				separationX = separationX / neighbourCount;
-				separationY = separationY / neighbourCount;
-
-				this.applyAlignment(alignmentX, alignmentY);
-				this.applyCohesion(cohesionX, cohesionY);
-				this.applySeparation(separationX, separationY);
+			
+			if (isRepelledByNeighbour) {
+				// Separation
+				// Point away from neighbour head
+				const dx = this.x - neighbour.x;
+				const dy = this.y - neighbour.y;
+				// Magnitude of separation is inverse of view distance
+				const separationMagnitude = Fish.neighbourRadius - dist;
+				// Scale distance components by separation magnitude
+				this.separationX += separationMagnitude * dx/dist;
+				this.separationY += separationMagnitude * dy/dist;
+			
+				// Point away from neighbour tail
+				const tailDx = this.x - neighbour.tailX;
+				const tailDy = this.y - neighbour.tailY;
+				const tailSeparationMagnitude = Fish.neighbourRadius - vectorLength(tailDx, tailDy);
+				// Scale distance components by separation magnitude
+				this.separationX += tailSeparationMagnitude * tailDx/dist;
+				this.separationY += tailSeparationMagnitude * tailDy/dist;	
 			}
 		}
 	}
 
-	_viewToNeighbour(neighbour) {
+	applyFlocking() {
+		// To get average forces across neighbour group
+		// Divide each force component by the number of fish it came from
+		if (this.neighbourCount > 0) {
+			let scaleAlignmentX = this.alignmentX / this.neighbourCount;
+			let scaledAlignmentY = this.alignmentY / this.neighbourCount;
+
+			let scaledCohesionX = this.cohesionX / this.neighbourCount;
+			let scaledCohesionY = this.cohesionY / this.neighbourCount;
+
+			let scaledSeparationX = this.separationX / this.neighbourCount;
+			let scaledSeparationY = this.separationY / this.neighbourCount;
+
+			this.applyAlignment(scaleAlignmentX, scaledAlignmentY);
+			this.applyCohesion(scaledCohesionX, scaledCohesionY);
+			this.applySeparation(scaledSeparationX, scaledSeparationY);
+		}
+	}
+
+	distToNeighbour(neighbour) {
 		// Distance between this fish and neighbour
 		const xDist = neighbour.x - this.x;
 		const yDist = neighbour.y - this.y;
+
+		return [xDist, yDist];
+	}
+
+	viewToNeighbour(neighbour) {
+		const dist = this.distToNeighbour(neighbour),
+					xDist = dist[0], 
+					yDist = dist[1];
 
 		// Angle between this fish and neighbour
 		const dotProduct = xDist * this.velX + yDist * this.velY;
@@ -337,7 +339,7 @@ class Fish {
 		this.ctx.strokeStyle = 'red';
 		this.ctx.beginPath();
 		this.ctx.moveTo(this.x, this.y);
-		this.ctx.lineTo(neighbour.x, neighbour.y);
+		this.ctx.lineTo(neighbour.tailX, neighbour.tailY);
 		this.ctx.closePath();
 		this.ctx.stroke();
 	}
