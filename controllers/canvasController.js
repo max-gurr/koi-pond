@@ -40,24 +40,15 @@ const times = [];
 let fps;
 
 function init() {
-
 	// Setup main canvas
 	main_canvas = document.getElementById("canvas");
 	main_ctx = main_canvas.getContext('2d');
 
-	main_canvas.width = window.innerWidth;
-	main_canvas.height = window.innerHeight;
-
-	width = window.innerWidth/draw_scale;
-	height = window.innerHeight/draw_scale;
-
-	border = 50;
-
 	// Setup offscreen canvas
 	background_canvas = document.createElement('canvas');
-	background_canvas.width = width;
-	background_canvas.height = height;
 	background_ctx = background_canvas.getContext('2d');
+
+	setCanvasSize();
 
 	// Make fish
 	school = [];
@@ -66,6 +57,19 @@ function init() {
 	}
 	
 	food = [];
+}
+
+function setCanvasSize() {
+	main_canvas.width = window.innerWidth;
+	main_canvas.height = window.innerHeight;
+
+	width = window.innerWidth/draw_scale;
+	height = window.innerHeight/draw_scale;
+
+	background_canvas.width = width;
+	background_canvas.height = height;
+
+	border = 50;
 }
 
 function makeFish() {
@@ -166,15 +170,20 @@ function eatFood(index) {
 	food.splice(index, 1);
 }
 
+function resizeHandler() {
+	setCanvasSize();
+	food = [];
+}
+
 init();
 animate();
 
-window.addEventListener("resize", init);
+window.addEventListener("resize", resizeHandler);
 
 window.onunload = function() {
     console.log("about to clear event listeners prior to leaving page");
     
-    window.removeEventListener("resize", init);
+    window.removeEventListener("resize", resizeHandler);
     document.body.removeEventListener("mousedown", placeFood);
     
     return;
