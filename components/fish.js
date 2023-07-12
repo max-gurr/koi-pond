@@ -10,7 +10,7 @@ class Fish {
 	static cohesionScale = 0.9;
 	static separationScale = 1.4;
 	static borderScale = 1.5;
-	static foodScale = 8;
+	static foodScale = 4;
 	static grow = true;
 	static maxLength = 6;
 	
@@ -229,7 +229,11 @@ class Fish {
 		const sizeIncrement = 0.03/this.joints.length + scaledAccMag;
 
 		// Index is an arbitrary multiplier, doesn't need to specifically reference joint
-		const wiggleSize = startSize + (sizeIncrement * index);
+		let wiggleSize = startSize + (sizeIncrement * index);
+
+		const velAdjust = 0.5 * (vectorLength(this.velX, this.velY) - Fish.minVel) / (Fish.maxVel - Fish.minVel) + Fish.minVel;
+		
+		wiggleSize = wiggleSize * velAdjust;
 
 		this.joints[index].driveAngle(wiggleSize, wiggleAngle);
 	}
